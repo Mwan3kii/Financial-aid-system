@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFAMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+    <div class="topbar">
+    <div class="topbar-logo">E</div>
+    <div><div class="topbar-title">Admin Dashboard</div><div class="topbar-sub">System Administrator</div></div>
+    <div class="topbar-right"><div class="topbar-user">AU</div></div>
+  </div>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-section">Admin</div>
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="14" height="10" rx="1"/><line x1="1" y1="7" x2="15" y2="7"/></svg>
+        Manage Applications
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='admin.html'">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+        Manage Users
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-item logout">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+        Logout
+      </div>
+    </nav>
+    <div class="main">
+      <div class="page-header">
+        <div class="page-title">Manage Applications</div>
+        <div class="page-title-bar"></div>
+      </div>
+
+      <div class="stats-row stats-5">
+        <div class="stat-card navy"><div class="stat-val navy">67</div><div class="stat-label">Total Apps</div></div>
+        <div class="stat-card amber"><div class="stat-val amber">14</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card teal"><div class="stat-val teal">22</div><div class="stat-label">Verified</div></div>
+        <div class="stat-card green"><div class="stat-val green">25</div><div class="stat-label">Approved</div></div>
+        <div class="stat-card red"><div class="stat-val red">6</div><div class="stat-label">Rejected</div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <div class="search-bar" style="flex:1;min-width:220px;margin-bottom:0">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Search by student name or application ID...">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" style="background:var(--off)">All</button>
+          <button class="btn btn-sm" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)">Pending</button>
+          <button class="btn btn-sm" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal)">Verified</button>
+          <button class="btn btn-sm" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green)">Approved</button>
+          <button class="btn btn-sm" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red)">Rejected</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">All Applications</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th><th>Student</th><th>Application ID</th><th>Loan (KES)</th><th>Institution</th><th>Submit Date</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-221051</td><td>250,000</td><td>UoN</td><td>14 Feb</td><td><span class="pill approved">Approved</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-224070</td><td>180,000</td><td>Strathmore</td><td>16 Feb</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>3</td><td style="font-weight:500">John Kamau</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225001</td><td>320,000</td><td>KU</td><td>17 Feb</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>4</td><td style="font-weight:500">Alice Njeri</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225020</td><td>200,000</td><td>JKUAT</td><td>18 Feb</td><td><span class="pill rejected">Rejected</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>5</td><td style="font-weight:500">Peter Ochieng</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225045</td><td>150,000</td><td>Moi Univ.</td><td>19 Feb</td><td><span class="pill approved">Approved</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>6</td><td style="font-weight:500">Grace Auma</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225060</td><td>275,000</td><td>UoN</td><td>20 Feb</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>7</td><td style="font-weight:500">Brian Mwangi</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225078</td><td>190,000</td><td>Strathmore</td><td>21 Feb</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              <tr><td>8</td><td style="font-weight:500">Sophia Kimani</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225099</td><td>220,000</td><td>KCA Univ.</td><td>22 Feb</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">View</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

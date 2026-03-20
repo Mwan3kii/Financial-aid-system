@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFAMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-logo">E</div>
+    <div><div class="topbar-title">Foreign Student Dashboard</div><div class="topbar-sub">EFAMS — Integrated Financial Aid Management System</div></div>
+    <div class="topbar-right"><div class="topbar-user">MW</div></div>
+  </div>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-section">Student</div>
+      <div class="sidebar-item" onclick="window.location.href='application_form.html'">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 14V6l6-4 6 4v8H10V9H6v5H2z"/></svg>
+        Submit Application
+      </div>
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
+        Application Status
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='notifications.html'">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H3a1 1 0 0 0-1 1v9l3-2h8a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg>
+        Notifications
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-item logout">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+        Logout
+      </div>
+    </nav>
+    <div class="main">
+      <div class="page-header">
+        <div class="page-title">Application Status</div>
+        <div class="page-title-bar"></div>
+        <div class="page-subtitle">Track your application and document verification progress</div>
+      </div>
+
+      <!-- Summary -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-header">Application Summary</div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+            <div><div class="form-label">Application ID</div><div style="font-size:15px;font-weight:600;color:var(--navy)">APP-123555</div></div>
+            <div><div class="form-label">Submission Date</div><div style="font-size:15px;font-weight:600;color:var(--navy)">14th February 2025</div></div>
+            <div><div class="form-label">Overall Status</div><span class="pill under-review">Under Review</span></div>
+            <div><div class="form-label">Loan Amount</div><div style="font-size:15px;font-weight:600;color:var(--navy)">KES 250,000</div></div>
+            <div><div class="form-label">Institution</div><div style="font-size:15px;font-weight:600;color:var(--navy)">University of Nairobi</div></div>
+            <div><div class="form-label">Programme</div><div style="font-size:15px;font-weight:600;color:var(--navy)">B.Sc. Engineering</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-header gold">Application Progress</div>
+        <div class="card-body">
+          <div class="progress-track">
+            <div class="progress-step done">
+              <div class="progress-dot done">✓</div>
+              <div class="progress-text">Submitted</div>
+            </div>
+            <div class="progress-step done">
+              <div class="progress-dot done">✓</div>
+              <div class="progress-text">Embassy Review</div>
+            </div>
+            <div class="progress-step">
+              <div class="progress-dot current">3</div>
+              <div class="progress-text" style="color:var(--navy);font-weight:600">Verified</div>
+            </div>
+            <div class="progress-step">
+              <div class="progress-dot">4</div>
+              <div class="progress-text">Assessment</div>
+            </div>
+            <div class="progress-step">
+              <div class="progress-dot">5</div>
+              <div class="progress-text">Decision</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents -->
+      <div class="card">
+        <div class="card-header teal">Documents</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Document</th><th>Type</th><th>Upload Date</th><th>Verified By</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="font-weight:500">Passport Photo</td><td>Identity</td><td>10 Feb 2025</td><td>Off. J. Kariuki</td><td><span class="pill verified">Verified</span></td></tr>
+              <tr><td style="font-weight:500">Academic Transcript</td><td>Academic</td><td>10 Feb 2025</td><td>Off. J. Kariuki</td><td><span class="pill verified">Verified</span></td></tr>
+              <tr><td style="font-weight:500">Admission Letter</td><td>Academic</td><td>11 Feb 2025</td><td>—</td><td><span class="pill pending">Pending</span></td></tr>
+              <tr><td style="font-weight:500">Bank Statement</td><td>Financial</td><td>11 Feb 2025</td><td>Off. J. Kariuki</td><td><span class="pill rejected">Rejected</span></td></tr>
+              <tr><td style="font-weight:500">Medical Certificate</td><td>Medical</td><td>12 Feb 2025</td><td>—</td><td><span class="pill pending">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

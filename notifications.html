@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFAMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+    <div class="topbar">
+    <div class="topbar-logo">E</div>
+    <div><div class="topbar-title">Foreign Student Dashboard</div></div>
+    <div class="topbar-right"><div class="topbar-user">MW</div></div>
+  </div>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-section">Student</div>
+      <div class="sidebar-item" onclick="window.location.href='application_form.html'">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="1" width="12" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/></svg>
+        Submit Application
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='application_status.html'">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
+        View Application
+      </div>
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H3a1 1 0 0 0-1 1v9l3-2h8a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg>
+        Notifications
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-item logout">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+        Logout
+      </div>
+    </nav>
+    <div class="main">
+      <div class="page-header">
+        <div class="page-title">Notifications</div>
+        <div class="page-title-bar"></div>
+      </div>
+
+      <div class="stats-row stats-4" style="margin-bottom:22px">
+        <div class="stat-card navy"><div class="stat-val navy">8</div><div class="stat-label">Total Messages</div></div>
+        <div class="stat-card red"><div class="stat-val red">3</div><div class="stat-label">Unread</div></div>
+        <div class="stat-card teal"><div class="stat-val teal">5</div><div class="stat-label">From Officers</div></div>
+        <div class="stat-card gold"><div class="stat-val gold">3</div><div class="stat-label">From Providers</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          Messages
+          <span style="margin-left:auto;background:var(--red);font-size:11px;padding:2px 8px;border-radius:100px">3 unread</span>
+        </div>
+        <div>
+          <div class="notif-row">
+            <div class="notif-unread"></div>
+            <div class="notif-content">
+              <div class="notif-header">
+                <div class="notif-sender">Financial Aid Provider</div>
+                <span class="notif-tag" style="background:var(--green-bg);color:var(--green)">Decision</span>
+                <div class="notif-date">14 Apr 2025</div>
+              </div>
+              <div class="notif-msg">Your application APP-221051 has been reviewed and <strong>approved</strong>. Funds of KES 250,000 will be disbursed within 5 business days.</div>
+              <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-teal btn-sm">View</button><button class="btn btn-ghost btn-sm">Reply</button></div>
+            </div>
+          </div>
+          <div class="notif-row">
+            <div class="notif-unread"></div>
+            <div class="notif-content">
+              <div class="notif-header">
+                <div class="notif-sender">Embassy Verification Officer</div>
+                <span class="notif-tag" style="background:var(--amber-bg);color:var(--amber)">Document</span>
+                <div class="notif-date">16 May 2025</div>
+              </div>
+              <div class="notif-msg">Please upload a clearer, more recent passport photo for application APP-224070. The current image is too small to read clearly.</div>
+              <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-teal btn-sm">View</button><button class="btn btn-ghost btn-sm">Reply</button></div>
+            </div>
+          </div>
+          <div class="notif-row">
+            <div class="notif-unread"></div>
+            <div class="notif-content">
+              <div class="notif-header">
+                <div class="notif-sender">Embassy Verification Officer</div>
+                <span class="notif-tag" style="background:var(--blue-bg);color:var(--blue)">Verification</span>
+                <div class="notif-date">02 Jun 2025</div>
+              </div>
+              <div class="notif-msg">All your submitted documents for APP-221051 have been successfully verified. Your application is now forwarded to the Financial Aid Provider.</div>
+              <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-teal btn-sm">View</button></div>
+            </div>
+          </div>
+          <div class="notif-row">
+            <div class="notif-read"></div>
+            <div class="notif-content">
+              <div class="notif-header">
+                <div class="notif-sender" style="color:var(--dim)">Financial Aid Provider</div>
+                <span class="notif-tag" style="background:var(--off);color:var(--dim)">Assessment</span>
+                <div class="notif-date" style="color:var(--hint)">10 Jun 2025</div>
+              </div>
+              <div class="notif-msg" style="opacity:.7">Your application is currently under assessment. You will be notified once a decision is made.</div>
+            </div>
+          </div>
+          <div class="notif-row">
+            <div class="notif-read"></div>
+            <div class="notif-content">
+              <div class="notif-header">
+                <div class="notif-sender" style="color:var(--dim)">System</div>
+                <span class="notif-tag" style="background:var(--off);color:var(--dim)">System</span>
+                <div class="notif-date" style="color:var(--hint)">15 Jun 2025</div>
+              </div>
+              <div class="notif-msg" style="opacity:.7">System maintenance is scheduled for 20th June 2025, 02:00–04:00 EAT. Some features may be temporarily unavailable.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

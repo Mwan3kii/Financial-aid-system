@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFAMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+    <div class="topbar">
+    <div class="topbar-logo">E</div>
+    <div><div class="topbar-title">Financial Aid Provider Dashboard</div></div>
+    <div class="topbar-right"><div class="topbar-user">SM</div></div>
+  </div>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-section">Provider</div>
+      <div class="sidebar-item active" onclick="window.location.href='manage_applications.html'">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="14" height="10" rx="1"/><line x1="1" y1="7" x2="15" y2="7"/></svg>
+        View Applications
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-item logout">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+        Logout
+      </div>
+    </nav>
+    <div class="main">
+      <div class="page-header">
+        <div class="page-title">Assess Application</div>
+        <div class="page-title-bar"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-header">Application Summary</div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+            <div><div class="form-label">Application ID</div><div style="font-weight:600;color:var(--navy)">APP-123555</div></div>
+            <div><div class="form-label">Student</div><div style="font-weight:600;color:var(--navy)">Agatha Wanja</div></div>
+            <div><div class="form-label">Embassy Status</div><span class="pill verified">Verified ✓</span></div>
+            <div><div class="form-label">Institution</div><div style="font-weight:600;color:var(--navy)">University of Nairobi</div></div>
+            <div><div class="form-label">Loan Requested</div><div style="font-weight:600;color:var(--navy)">KES 250,000</div></div>
+            <div><div class="form-label">Submitted</div><div style="font-weight:600;color:var(--navy)">14 Feb 2025</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-panel">
+        <!-- Documents -->
+        <div class="card">
+          <div class="card-header teal">Submitted Documents</div>
+          <div class="card-body" style="padding:14px">
+            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Application Form</div><div class="file-meta">application_form.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
+            <div class="file-row"><div class="file-icon img">IMG</div><div><div class="file-name">Passport Photo</div><div class="file-meta">passport.png</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
+            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Admission Letter</div><div class="file-meta">admission_letter.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
+            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Academic Transcript</div><div class="file-meta">transcript.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
+            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Bank Statement</div><div class="file-meta">bank_statement.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
+          </div>
+        </div>
+
+        <!-- Assessment Decision -->
+        <div class="card">
+          <div class="card-header gold">Assessment Decision</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Decision</label>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+                <label class="radio-label" style="color:var(--green)"><input type="radio" name="adec" checked> Approve (Full Amount)</label>
+                <label class="radio-label" style="color:var(--amber)"><input type="radio" name="adec"> Approve (Partial Amount)</label>
+                <label class="radio-label" style="color:var(--red)"><input type="radio" name="adec"> Reject</label>
+                <label class="radio-label" style="color:var(--blue)"><input type="radio" name="adec"> Defer for Review</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Approved Amount (KES)</label>
+              <input class="form-control" value="250,000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Assessment Comments</label>
+              <textarea class="form-control" rows="5" style="resize:vertical">Student meets all eligibility criteria. Academic performance is strong (GPA 3.7). Financial need is substantiated by bank statements. Full loan amount approved.</textarea>
+            </div>
+            <button class="btn btn-navy btn-lg" style="width:100%;justify-content:center;margin-top:6px">Submit Assessment Decision →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

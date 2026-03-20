@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFAMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+    <div class="topbar">
+    <div class="topbar-logo">E</div>
+    <div><div class="topbar-title">Financial Aid Provider Dashboard</div><div class="topbar-sub">Higher Education Loans Board (HELB)</div></div>
+    <div class="topbar-right"><div class="topbar-user">SM</div></div>
+  </div>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-section">Provider</div>
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="14" height="10" rx="1"/><line x1="1" y1="7" x2="15" y2="7"/></svg>
+        View Applications
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-item logout">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
+        Logout
+      </div>
+    </nav>
+    <div class="main">
+      <div class="page-header">
+        <div class="page-title">Verified Application List</div>
+        <div class="page-title-bar"></div>
+        <div class="page-subtitle">Applications verified by the embassy — ready for financial assessment</div>
+      </div>
+
+      <div class="stats-row stats-4">
+        <div class="stat-card teal"><div class="stat-val teal">22</div><div class="stat-label">Verified Apps</div></div>
+        <div class="stat-card green"><div class="stat-val green">15</div><div class="stat-label">Approved</div></div>
+        <div class="stat-card red"><div class="stat-val red">4</div><div class="stat-label">Rejected</div></div>
+        <div class="stat-card gold"><div class="stat-val gold" style="font-size:20px">KES 3.2M</div><div class="stat-label">Funds Disbursed</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Verified Applications — Ready for Assessment</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th><th>Student Name</th><th>Application ID</th><th>Loan (KES)</th><th>Institution</th><th>Verified Date</th><th>Status</th><th>Action</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-221051</td><td>250,000</td><td>Univ. of Nairobi</td><td>20 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
+              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-224070</td><td>180,000</td><td>Strathmore Univ.</td><td>22 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
+              <tr><td>3</td><td style="font-weight:500">John Kamau</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225001</td><td>320,000</td><td>KU</td><td>23 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
+              <tr><td>7</td><td style="font-weight:500">Brian Mwangi</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225078</td><td>190,000</td><td>Strathmore</td><td>26 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

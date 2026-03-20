@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a2744;--navy2:#243460;--gold:#b8860b;--gold-l:#e8c040;
+  --teal:#0d6e6e;--teal-l:#1a9999;--white:#fff;--off:#f4f6fb;
+  --text:#1a2744;--dim:#6b7a9e;--border:#d0d8ee;
+  --green:#1a7a4a;--red:#8b1a1a;--amber:#b86000;
+}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;border-bottom:3px solid var(--gold)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo-mark{width:36px;height:36px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:16px;color:var(--navy)}
+.nav-brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white)}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{font-size:13.5px;color:#a0b0d0;font-weight:400;letter-spacing:0.3px;transition:color .2s}
+.nav-links a:hover{color:var(--gold-l)}
+.nav-cta{background:var(--gold);color:var(--navy);padding:8px 20px;border-radius:6px;font-size:13px;font-weight:500;transition:background .2s}
+.nav-cta:hover{background:var(--gold-l)}
+
+/* HERO */
+.hero{background:var(--navy);min-height:90vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:0;overflow:hidden;position:relative}
+.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hero-circle{position:absolute;border-radius:50%;background:var(--gold);opacity:.04}
+.hero-c1{width:600px;height:600px;top:-200px;right:-150px}
+.hero-c2{width:300px;height:300px;bottom:-80px;left:100px}
+.hero-c3{width:200px;height:200px;top:40%;right:40%}
+.hero-left{padding:6rem 3rem 6rem 6rem;position:relative;z-index:2}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:#ffffff12;border:1px solid #ffffff22;padding:6px 14px;border-radius:100px;margin-bottom:2rem}
+.hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--gold-l)}
+.hero-eyebrow span{font-size:12px;color:#a0b8d8;letter-spacing:1px;text-transform:uppercase;font-weight:400}
+.hero h1{font-family:'Playfair Display',serif;font-size:3.4rem;font-weight:700;color:var(--white);line-height:1.15;margin-bottom:1.5rem}
+.hero h1 em{color:var(--gold-l);font-style:normal}
+.hero-desc{font-size:1rem;color:#8899cc;line-height:1.8;max-width:480px;margin-bottom:2.5rem;font-weight:300}
+.hero-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--navy);padding:14px 28px;border-radius:8px;font-size:14px;font-weight:500;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{background:var(--gold-l);transform:translateY(-1px)}
+.btn-ghost{border:1px solid #ffffff30;color:var(--white);padding:14px 28px;border-radius:8px;font-size:14px;font-weight:400;transition:all .2s}
+.btn-ghost:hover{background:#ffffff10;border-color:#ffffff55}
+.hero-stats{display:flex;gap:2.5rem;margin-top:3rem;padding-top:2rem;border-top:1px solid #ffffff15}
+.hero-stat-val{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold-l)}
+.hero-stat-label{font-size:12px;color:#7080a8;margin-top:2px}
+
+/* HERO RIGHT — mockup */
+.hero-right{padding:4rem 6rem 4rem 2rem;position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
+.mockup-wrap{background:#0f1a38;border:1px solid #2a3a60;border-radius:14px;overflow:hidden;width:100%;max-width:440px;box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.mockup-bar{background:#0a1228;display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+.mockup-dots{display:flex;gap:6px}
+.mockup-dot{width:10px;height:10px;border-radius:50%}
+.mockup-url{background:#162040;border-radius:6px;padding:4px 12px;font-size:10px;color:#5a6a8a;flex:1;margin:0 12px}
+.mockup-body{padding:0}
+.mockup-topbar{background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--gold)}
+.mockup-logo-circle{width:28px;height:28px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy);font-family:'Playfair Display',serif}
+.mockup-title{font-size:11px;font-weight:500;color:var(--white)}
+.mockup-subtitle{font-size:9px;color:var(--gold-l);margin-top:1px}
+.mockup-content{display:grid;grid-template-columns:80px 1fr;min-height:320px}
+.mockup-sidebar{background:#162040;padding:12px 0}
+.mockup-sidebar-item{padding:10px 14px;font-size:9.5px;color:#5a7090;cursor:pointer}
+.mockup-sidebar-item.active{background:var(--gold);color:var(--navy);font-weight:500}
+.mockup-main{background:#0f1830;padding:14px}
+.mockup-page-title{font-size:11px;font-weight:500;color:var(--white);margin-bottom:3px}
+.mockup-gold-line{width:40px;height:2px;background:var(--gold);border-radius:1px;margin-bottom:12px}
+.mockup-card{background:#162040;border:1px solid #2a3a60;border-radius:8px;padding:10px;margin-bottom:8px}
+.mockup-card-header{font-size:8.5px;font-weight:500;color:var(--gold-l);margin-bottom:6px}
+.mockup-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.mockup-label{font-size:8px;color:#4a6080}
+.mockup-value{font-size:8.5px;color:#a0c0e0;font-weight:400}
+.mockup-badge{padding:2px 8px;border-radius:100px;font-size:7.5px;font-weight:500}
+.badge-pending{background:#b8600020;color:#e8a040;border:1px solid #b8600040}
+.badge-verified{background:#1a7a4a20;color:#4acd8a;border:1px solid #1a7a4a40}
+.badge-rejected{background:#8b1a1a20;color:#e05050;border:1px solid #8b1a1a40}
+.mockup-table-header{display:grid;grid-template-columns:2fr 1.5fr 1.2fr 1fr;gap:4px;padding:5px 8px;background:#0a1228;border-radius:4px;margin-bottom:4px}
+.mockup-table-hcell{font-size:7.5px;color:#4a6080;font-weight:500}
+.mockup-table-row{display:grid;grid-template-columns:2fr 1.5fr 1.2fr 1fr;gap:4px;padding:5px 8px;border-radius:4px}
+.mockup-table-row:nth-child(odd){background:#162040}
+.mockup-cell{font-size:8px;color:#8090b0}
+
+/* TRUST BAR */
+.trust{background:var(--off);padding:1.8rem 6rem;display:flex;align-items:center;gap:3rem;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.trust-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap}
+.trust-divider{width:1px;height:20px;background:var(--border)}
+.trust-items{display:flex;gap:3rem;flex-wrap:wrap;align-items:center}
+.trust-item{font-size:13px;color:var(--dim);display:flex;align-items:center;gap:8px}
+.trust-icon{width:18px;height:18px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trust-icon svg{width:10px;height:10px;fill:none;stroke:var(--white);stroke-width:2}
+
+/* HOW IT WORKS */
+.section{padding:6rem 6rem}
+.section-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--teal);font-weight:500;margin-bottom:0.8rem}
+.section-title{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:var(--navy);margin-bottom:1rem;line-height:1.25}
+.section-sub{font-size:1rem;color:var(--dim);max-width:520px;line-height:1.8;font-weight:300;margin-bottom:3rem}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.steps-grid::before{content:'';position:absolute;top:36px;left:10%;width:80%;height:2px;background:linear-gradient(90deg,var(--gold) 0%,var(--teal) 100%);z-index:0}
+.step{text-align:center;padding:0 1rem;position:relative;z-index:1}
+.step-num{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin:0 auto 1.2rem;border:3px solid}
+.step:nth-child(1) .step-num{background:#fff8e8;color:var(--gold);border-color:var(--gold)}
+.step:nth-child(2) .step-num{background:#e8f4ff;color:#1a5c8e;border-color:#1a5c8e}
+.step:nth-child(3) .step-num{background:#e8f4ef;color:var(--teal);border-color:var(--teal)}
+.step:nth-child(4) .step-num{background:#f0e8ff;color:#4a1a8e;border-color:#4a1a8e}
+.step-icon{font-size:28px;display:block;margin-bottom:6px}
+.step-title{font-weight:500;font-size:15px;color:var(--navy);margin-bottom:0.5rem}
+.step-desc{font-size:13px;color:var(--dim);line-height:1.6}
+
+/* FEATURES */
+.features-bg{background:var(--navy);padding:6rem}
+.features-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:3rem}
+.feature-card{background:#ffffff08;border:1px solid #ffffff15;border-radius:12px;padding:2rem;transition:all .25s;cursor:default}
+.feature-card:hover{background:#ffffff12;border-color:var(--gold);transform:translateY(-3px)}
+.feature-icon-wrap{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem}
+.feature-card h3{font-size:16px;font-weight:500;color:var(--white);margin-bottom:0.6rem}
+.feature-card p{font-size:13.5px;color:#7080a0;line-height:1.7}
+.fi-gold{background:#b8860b20;border:1px solid #b8860b40}
+.fi-teal{background:#0d6e6e20;border:1px solid #0d6e6e40}
+.fi-blue{background:#1a3a8e20;border:1px solid #1a3a8e40}
+.fi-green{background:#1a7a4a20;border:1px solid #1a7a4a40}
+.fi-purple{background:#4a1a8e20;border:1px solid #4a1a8e40}
+.fi-red{background:#8b1a1a20;border:1px solid #8b1a1a40}
+
+/* ROLES */
+.roles-section{padding:6rem}
+.roles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem}
+.role-card{border-radius:12px;overflow:hidden;border:1px solid var(--border);transition:transform .25s,box-shadow .25s}
+.role-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(26,39,68,.12)}
+.role-header{padding:1.5rem;display:flex;align-items:center;gap:12px}
+.role-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.role-name{font-weight:500;font-size:15px;color:var(--navy)}
+.role-tag{font-size:11px;color:var(--dim);margin-top:2px}
+.role-body{padding:0 1.5rem 1.5rem;border-top:1px solid var(--border)}
+.role-feature{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:#4a5a7a}
+.role-feature:last-child{border-bottom:none}
+.role-check{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+
+/* STATS */
+.stats-section{background:var(--navy);padding:5rem 6rem}
+.stats-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.stat-card{background:#ffffff08;border:1px solid #ffffff12;border-radius:10px;padding:1.5rem}
+.stat-val{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:var(--gold-l)}
+.stat-label{font-size:13px;color:#7080a0;margin-top:4px}
+.stat-bar{height:3px;border-radius:2px;margin-top:10px}
+
+/* CTA */
+.cta-section{padding:7rem 6rem;text-align:center;background:linear-gradient(135deg,#f0f4ff 0%,#e8f4f0 100%)}
+.cta-inner{max-width:600px;margin:0 auto}
+.cta-section h2{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;color:var(--navy);margin-bottom:1rem}
+.cta-section p{font-size:1rem;color:var(--dim);line-height:1.8;margin-bottom:2.5rem}
+.cta-actions{display:flex;align-items:center;justify-content:center;gap:1rem}
+
+/* FOOTER */
+footer{background:#0f1530;padding:4rem 6rem 2rem;border-top:1px solid #1e2a48}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand p{font-size:13px;color:#4a5a7a;line-height:1.7;margin-top:1rem;max-width:240px}
+.footer-col h4{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:500;margin-bottom:1rem}
+.footer-col a{display:block;font-size:13px;color:#4a5a7a;margin-bottom:0.5rem;transition:color .15s}
+.footer-col a:hover{color:#8090b0}
+.footer-bottom{border-top:1px solid #1e2a48;padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:12px;color:#2a3a58}
+.footer-badges{display:flex;gap:0.8rem}
+.footer-badge{font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid #1e2a48;color:#2a3a58}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .steps-grid,.features-grid,.roles-grid,.footer-grid{grid-template-columns:1fr 1fr}
+  .section,.features-bg,.roles-section,.stats-section,.cta-section{padding:4rem 2rem}
+  nav{padding:0 1.5rem}
+  .trust{padding:1.5rem 2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">E</div>
+    <span class="nav-brand">EFAMS</span>
+  </div>
+  <div class="nav-links">
+    <a href="#">How it works</a>
+    <a href="#">Features</a>
+    <a href="#">For Students</a>
+    <a href="#">For Institutions</a>
+    <a href="login.html" style="color:var(--gold-l)">Sign In</a>
+    <a href="application_form.html" class="nav-cta">Apply Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-circle hero-c1"></div>
+    <div class="hero-circle hero-c2"></div>
+    <div class="hero-circle hero-c3"></div>
+  </div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      <span>Now Live — Financial Aid for Foreign Students</span>
+    </div>
+    <h1>Seamless Financial Aid<br>for <em>Foreign Students</em><br>Studying Abroad</h1>
+    <p class="hero-desc">EFAMS connects foreign students, embassy verification officers, and financial aid providers on one centralised digital platform — removing delays, paperwork, and guesswork from the aid process.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2l6 4-6 4-6-4 6-4zm0 6l6 4v1l-6 4-6-4v-1l6-4z" opacity=".7"/><path d="M2 9.5l6 4 6-4"/></svg>
+        Start Your Application
+      </a>
+      <a href="#" class="btn-ghost">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">4,200+</div>
+        <div class="hero-stat-label">Applications processed</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">KES 1.2B</div>
+        <div class="hero-stat-label">Aid disbursed</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">48 hrs</div>
+        <div class="hero-stat-label">Average decision time</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="mockup-wrap">
+      <div class="mockup-bar">
+        <div class="mockup-dots">
+          <div class="mockup-dot" style="background:#ff5f57"></div>
+          <div class="mockup-dot" style="background:#febc2e"></div>
+          <div class="mockup-dot" style="background:#28c840"></div>
+        </div>
+        <div class="mockup-url">https://www.efams.io/dashboard</div>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-topbar">
+          <div class="mockup-logo-circle">E</div>
+          <div>
+            <div class="mockup-title">Foreign Student Dashboard</div>
+            <div class="mockup-subtitle">EFAMS — Financial Aid Management</div>
+          </div>
+        </div>
+        <div class="mockup-content">
+          <div class="mockup-sidebar">
+            <div class="mockup-sidebar-item active">Application Status</div>
+            <div class="mockup-sidebar-item">Submit Form</div>
+            <div class="mockup-sidebar-item">Notifications</div>
+            <div class="mockup-sidebar-item">Documents</div>
+            <div class="mockup-sidebar-item" style="margin-top:auto">Logout</div>
+          </div>
+          <div class="mockup-main">
+            <div class="mockup-page-title">Application Status</div>
+            <div class="mockup-gold-line"></div>
+            <div class="mockup-card">
+              <div class="mockup-card-header">Application Summary</div>
+              <div class="mockup-row"><span class="mockup-label">App ID</span><span class="mockup-value">APP-123555</span></div>
+              <div class="mockup-row"><span class="mockup-label">Status</span><span class="mockup-badge badge-pending">Under Review</span></div>
+              <div class="mockup-row"><span class="mockup-label">Amount</span><span class="mockup-value">KES 250,000</span></div>
+            </div>
+            <div class="mockup-card">
+              <div class="mockup-card-header">Documents</div>
+              <div class="mockup-table-header">
+                <div class="mockup-table-hcell">Document</div>
+                <div class="mockup-table-hcell">Type</div>
+                <div class="mockup-table-hcell">Date</div>
+                <div class="mockup-table-hcell">Status</div>
+              </div>
+              <div class="mockup-table-row">
+                <div class="mockup-cell">Passport Photo</div>
+                <div class="mockup-cell">Identity</div>
+                <div class="mockup-cell">10 Feb</div>
+                <div><span class="mockup-badge badge-verified" style="font-size:6.5px">Verified</span></div>
+              </div>
+              <div class="mockup-table-row">
+                <div class="mockup-cell">Transcript</div>
+                <div class="mockup-cell">Academic</div>
+                <div class="mockup-cell">10 Feb</div>
+                <div><span class="mockup-badge badge-verified" style="font-size:6.5px">Verified</span></div>
+              </div>
+              <div class="mockup-table-row">
+                <div class="mockup-cell">Bank Statement</div>
+                <div class="mockup-cell">Financial</div>
+                <div class="mockup-cell">11 Feb</div>
+                <div><span class="mockup-badge badge-rejected" style="font-size:6.5px">Rejected</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust">
+  <span class="trust-label">Trusted by</span>
+  <div class="trust-divider"></div>
+  <div class="trust-items">
+    <div class="trust-item">
+      <div class="trust-icon"><svg viewBox="0 0 10 10"><polyline points="2,5 4,8 8,2"/></svg></div>
+      Ministry of Education Kenya
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon"><svg viewBox="0 0 10 10"><polyline points="2,5 4,8 8,2"/></svg></div>
+      Higher Education Loans Board
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon"><svg viewBox="0 0 10 10"><polyline points="2,5 4,8 8,2"/></svg></div>
+      Kenya Embassy Network
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon"><svg viewBox="0 0 10 10"><polyline points="2,5 4,8 8,2"/></svg></div>
+      50+ Accredited Universities
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="section-eyebrow">Process</div>
+  <h2 class="section-title">How EFAMS Works</h2>
+  <p class="section-sub">A transparent, four-step journey from application to disbursement — every stage tracked in real time.</p>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Student Applies</div>
+      <p class="step-desc">Foreign student fills in personal, academic and financial details, uploads supporting documents, and submits the application online.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Embassy Verifies</div>
+      <p class="step-desc">An embassy verification officer reviews all documents, approves or requests corrections, then forwards verified applications to the aid provider.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Provider Assesses</div>
+      <p class="step-desc">The financial aid provider scores the application on academic, financial and need criteria, then issues an approval, partial approval, or rejection.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">Funds Disbursed</div>
+      <p class="step-desc">The student receives an in-app notification of the decision with the approved amount. Funds are disbursed directly to the student's account.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-bg">
+  <div class="section-eyebrow" style="color:var(--gold-l)">Features</div>
+  <h2 class="section-title" style="color:var(--white)">Everything You Need,<br>In One Place</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon-wrap fi-gold">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <h3>Digital Application Form</h3>
+      <p>Structured form capturing personal details, institution info, loan requirements and supporting documentation — all in one submission.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-wrap fi-teal">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d6e6e" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h3>Real-time Status Tracking</h3>
+      <p>Students see exactly where their application stands — from submission through embassy review, assessment, and final decision.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-wrap fi-blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b5bdb" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h3>Secure Document Upload</h3>
+      <p>Encrypted file storage for passports, transcripts, admission letters and financial statements with format and authenticity validation.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-wrap fi-green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>Multi-role Access Control</h3>
+      <p>Separate dashboards and permissions for students, embassy officers, financial aid providers and system administrators.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-wrap fi-purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6a3aae" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91"/></svg>
+      </div>
+      <h3>In-app Notifications</h3>
+      <p>Instant alerts for document requests, status changes, comments from officers and providers, and final decision outcomes.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon-wrap fi-red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h3>Assessment Scoring Engine</h3>
+      <p>Weighted scoring across academic performance, financial need and eligibility criteria, generating objective, auditable decisions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="roles-section">
+  <div class="section-eyebrow">Who uses EFAMS</div>
+  <h2 class="section-title">Built for Every Stakeholder</h2>
+  <p class="section-sub">Four distinct portals, each designed around what that user actually needs to do.</p>
+  <div class="roles-grid">
+
+    <div class="role-card">
+      <div class="role-header" style="background:#e8f4ef">
+        <div class="role-avatar" style="background:#1a7a4a20;font-size:22px">🎓</div>
+        <div>
+          <div class="role-name">Foreign Student</div>
+          <div class="role-tag">Applicant portal</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <div class="role-feature"><div class="role-check" style="background:#1a7a4a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Submit aid applications online</div>
+        <div class="role-feature"><div class="role-check" style="background:#1a7a4a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Upload and manage documents</div>
+        <div class="role-feature"><div class="role-check" style="background:#1a7a4a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Track status in real time</div>
+        <div class="role-feature"><div class="role-check" style="background:#1a7a4a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Receive notifications and decisions</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-header" style="background:#e8eef8">
+        <div class="role-avatar" style="background:#1a274420;font-size:22px">🏛</div>
+        <div>
+          <div class="role-name">Embassy Officer</div>
+          <div class="role-tag">Verification portal</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <div class="role-feature"><div class="role-check" style="background:var(--navy)"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Review pending applications</div>
+        <div class="role-feature"><div class="role-check" style="background:var(--navy)"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Verify and approve documents</div>
+        <div class="role-feature"><div class="role-check" style="background:var(--navy)"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Request additional information</div>
+        <div class="role-feature"><div class="role-check" style="background:var(--navy)"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Forward verified apps to providers</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-header" style="background:#f3eeff">
+        <div class="role-avatar" style="background:#4a1a8e20;font-size:22px">💼</div>
+        <div>
+          <div class="role-name">Aid Provider</div>
+          <div class="role-tag">Assessment portal</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <div class="role-feature"><div class="role-check" style="background:#4a1a8e"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>View verified applications</div>
+        <div class="role-feature"><div class="role-check" style="background:#4a1a8e"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Score applicants objectively</div>
+        <div class="role-feature"><div class="role-check" style="background:#4a1a8e"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Approve or reject with comments</div>
+        <div class="role-feature"><div class="role-check" style="background:#4a1a8e"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Track budget and disbursements</div>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="role-header" style="background:#fff0f0">
+        <div class="role-avatar" style="background:#8b1a1a20;font-size:22px">⚙</div>
+        <div>
+          <div class="role-name">System Admin</div>
+          <div class="role-tag">Administration portal</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <div class="role-feature"><div class="role-check" style="background:#8b1a1a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Manage all users and roles</div>
+        <div class="role-feature"><div class="role-check" style="background:#8b1a1a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Oversee all applications</div>
+        <div class="role-feature"><div class="role-check" style="background:#8b1a1a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>Assign officers to applications</div>
+        <div class="role-feature"><div class="role-check" style="background:#8b1a1a"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2"><polyline points="2,5 4,8 8,2"/></svg></div>View system-wide analytics</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <div>
+      <div class="section-eyebrow" style="color:var(--gold-l)">Impact</div>
+      <h2 class="section-title" style="color:var(--white);margin-bottom:1.2rem">Transforming How<br>Aid Reaches Students</h2>
+      <p style="font-size:14px;color:#5a6a8a;line-height:1.8;max-width:360px">Before EFAMS, students waited months for decisions, paperwork was lost and funds were misallocated. The system has changed that entirely.</p>
+      <div style="display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap">
+        <a href="#" class="btn-primary">View Full Report</a>
+        <a href="#" class="btn-ghost" style="font-size:13px">Contact the Team</a>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val">4,200+</div>
+        <div class="stat-label">Applications processed</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,var(--gold) 78%,#2a3a58 78%)"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">KES 1.2B</div>
+        <div class="stat-label">Total aid disbursed</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,var(--teal-l) 65%,#2a3a58 65%)"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">48 hrs</div>
+        <div class="stat-label">Average decision time</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,#4a8ee8 55%,#2a3a58 55%)"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">94%</div>
+        <div class="stat-label">Student satisfaction rate</div>
+        <div class="stat-bar" style="background:linear-gradient(90deg,#4acd8a 94%,#2a3a58 94%)"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--navy);padding:6px 16px;border-radius:100px;margin-bottom:1.5rem">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--gold-l)"></div>
+      <span style="font-size:12px;color:#a0b8d8;letter-spacing:1px;text-transform:uppercase">Applications Open</span>
+    </div>
+    <h2>Ready to Apply for<br>Financial Aid?</h2>
+    <p>Create your account today and start your application in under 10 minutes. Our system will guide you through every step of the process.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary" style="font-size:15px;padding:16px 32px">Create Free Account</a>
+      <a href="#" style="font-size:14px;color:var(--teal);font-weight:500;text-decoration:underline;text-underline-offset:3px">Already have an account? Sign in →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:16px;color:var(--navy)">E</div>
+        <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white)">EFAMS</span>
+      </div>
+      <p>Integrated Financial Aid Management System connecting foreign students, embassies and aid providers on one platform.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="#">How it works</a>
+      <a href="#">Features</a>
+      <a href="#">Security</a>
+      <a href="#">API Docs</a>
+    </div>
+    <div class="footer-col">
+      <h4>Portals</h4>
+      <a href="#">For Students</a>
+      <a href="#">For Officers</a>
+      <a href="#">For Providers</a>
+      <a href="#">For Admins</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Help Centre</a>
+      <a href="#">Contact Us</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 EFAMS — Integrated Financial Aid Management System. All rights reserved.</span>
+    <div class="footer-badges">
+      <span class="footer-badge">SSL Secured</span>
+      <span class="footer-badge">GDPR Compliant</span>
+      <span class="footer-badge">ISO 27001</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
