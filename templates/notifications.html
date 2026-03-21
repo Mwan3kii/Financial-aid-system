@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EFAMS</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
     <div class="topbar">
@@ -17,14 +17,14 @@
   <div class="shell">
     <nav class="sidebar">
       <div class="sidebar-section">Student</div>
-      <div class="sidebar-item" onclick="window.location.href='application_form.html'">
+      <a href="{{ url_for('apply') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="1" width="12" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/></svg>
         Submit Application
-      </div>
-      <div class="sidebar-item" onclick="window.location.href='application_status.html'">
+      </a>
+      <a href="{{ url_for('status') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
         View Application
-      </div>
+      </a>
       <div class="sidebar-item active">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H3a1 1 0 0 0-1 1v9l3-2h8a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg>
         Notifications

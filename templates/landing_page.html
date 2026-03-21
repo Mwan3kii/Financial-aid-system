@@ -189,8 +189,8 @@ footer{background:#0f1530;padding:4rem 6rem 2rem;border-top:1px solid #1e2a48}
     <a href="#">Features</a>
     <a href="#">For Students</a>
     <a href="#">For Institutions</a>
-    <a href="login.html" style="color:var(--gold-l)">Sign In</a>
-    <a href="application_form.html" class="nav-cta">Apply Now</a>
+    <a href="{{ url_for('login') }}" style="color:var(--gold-l)">Sign In</a>
+    <a href="{{ url_for('apply') }}" class="nav-cta">Apply Now</a>
   </div>
 </nav>
 

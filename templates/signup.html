@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EFAMS — Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 <div class="login-wrap">
@@ -47,25 +47,36 @@
         <div class="login-card-title">Sign Up to EFAMS</div>
         <div class="login-card-sub">Integrated Financial Aid Management System</div>
       </div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px;{% if category == 'error' %}background:#fdeaea;color:#8b1a1a;border:1px solid #f0c0c0{% else %}background:#e6f5ec;color:#1a7a4a;border:1px solid #c0e8d0{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
       <div class="login-welcome">
         <h2>Create Your Account</h2>
         <p>Enter your details to get started</p>
       </div>
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input class="form-control" type="text" value="johndoe" placeholder="Enter your username">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input class="form-control" type="text" value="johndoe@embassy.go.ke" placeholder="Enter your email">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-control" type="password" value="••••••••••" placeholder="Enter your password">
-      </div>
-      <button class="btn btn-navy btn-lg" style="width:100%;justify-content:center;font-size:15px">Sign In →</button>
+      <form method="POST" action="{{ url_for('signup_submit') }}">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-control" type="text" name="username" placeholder="Enter your username" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-control" type="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-control" type="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn btn-navy btn-lg" style="width:100%;justify-content:center;font-size:15px">Sign up →</button>
+      </form>
       <div class="login-divider">or</div>
-      <div class="login-signup">Already have an account? <a href="login.html">Login</a></div>
+      <div class="login-signup">Already have an account? <a href="{{ url_for('login') }}">Login</a></div>
     </div>
   </div>
 </div>
