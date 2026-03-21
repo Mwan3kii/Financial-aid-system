@@ -49,7 +49,31 @@
           <span class="search-icon">🔍</span>
           <input class="search-input" placeholder="Search by name, email or role...">
         </div>
-        <button class="btn btn-green btn-lg">+ Add New User</button>
+        <button class="btn btn-green btn-lg" onclick="document.getElementById('add-user-form').scrollIntoView({behavior:'smooth'})">+ Add New User</button>
+      </div>
+
+      <div class="card" id="add-user-form" style="margin-bottom:20px;">
+        <div class="card-header">Add New User</div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('admin.add_user') }}">
+            <div class="form-grid form-grid-4" style="gap:12px;">
+              <div class="form-group"><label class="form-label">First Name</label><input class="form-control" type="text" name="first_name" required></div>
+              <div class="form-group"><label class="form-label">Last Name</label><input class="form-control" type="text" name="last_name" required></div>
+              <div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" name="email" required></div>
+              <div class="form-group"><label class="form-label">Password</label><input class="form-control" type="password" name="password" required></div>
+            </div>
+            <div class="form-group" style="margin-top:12px">
+              <label class="form-label">Role</label>
+              <select class="form-control" name="role" required>
+                <option value="STUDENT">Student</option>
+                <option value="OFFICER">Verification Officer</option>
+                <option value="PROVIDER">Financial Aid Provider</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-green btn-lg" style="margin-top:12px;">Create User</button>
+          </form>
+        </div>
       </div>
 
       <div class="card">

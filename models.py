@@ -197,6 +197,38 @@ def create_application(student_id, requested_amount, purpose_statement,
     return app_id
 
 
+def upsert_foreign_student(student_id, **kwargs):
+    """Insert or update foreign student details"""
+    cur = mysql.connection.cursor()
+    
+    # Check if student exists
+    cur.execute("SELECT student_id FROM foreign_students WHERE student_id = %s", (student_id,))
+    exists = cur.fetchone()
+    
+    if exists:
+        # Update
+        fields = []
+        values = []
+        for key, value in kwargs.items():
+            if value is not None:
+                fields.append(f"{key} = %s")
+                values.append(value)
+        if fields:
+            query = f"UPDATE foreign_students SET {', '.join(fields)} WHERE student_id = %s"
+            values.append(student_id)
+            cur.execute(query, values)
+    else:
+        # Insert
+        fields = ['student_id'] + list(kwargs.keys())
+        placeholders = ['%s'] * len(fields)
+        values = [student_id] + list(kwargs.values())
+        query = f"INSERT INTO foreign_students ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
+        cur.execute(query, values)
+    
+    mysql.connection.commit()
+    cur.close()
+
+
 def update_application_status(application_id, new_status,
                                remarks='', officer_id=None):
     cur = mysql.connection.cursor()

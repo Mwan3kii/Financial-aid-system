@@ -41,26 +41,28 @@
         <div class="page-title-bar"></div>
       </div>
 
+      <form method="POST" action="{{ url_for('student.submit_application') }}" enctype="multipart/form-data">
+
       <!-- Personal Details -->
       <div class="form-section">
         <div class="form-section-header navy">Applicant Personal Details</div>
         <div class="form-section-body">
           <div class="form-grid form-grid-3" style="margin-bottom:14px">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">First Name</label><input class="form-control" value="Mary"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Middle Name</label><input class="form-control" value="Jane"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Last Name</label><input class="form-control" value="Wambui"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">First Name</label><input class="form-control" name="first_name" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Middle Name</label><input class="form-control" name="middle_name" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Last Name</label><input class="form-control" name="last_name" value=""></div>
           </div>
           <div class="form-grid form-grid-4" style="margin-bottom:14px">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Date of Birth</label><input class="form-control" value="15/03/2000"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Gender</label><input class="form-control" value="Female"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Nationality</label><input class="form-control" value="Kenyan"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Marital Status</label><input class="form-control" value="Single"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Date of Birth</label><input class="form-control" name="date_of_birth" type="date" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Gender</label><select class="form-control" name="gender"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Nationality</label><input class="form-control" name="nationality" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Marital Status</label><select class="form-control" name="marital_status"><option value="">Select</option><option value="Single">Single</option><option value="Married">Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option></select></div>
           </div>
           <div class="form-grid form-grid-4">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Passport Number</label><input class="form-control" value="A12345678"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Phone Number</label><input class="form-control" value="+254712345678"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Email Address</label><input class="form-control" value="mary@example.com"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Home Address</label><input class="form-control" value="Nairobi, Kenya"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Passport Number</label><input class="form-control" name="passport_number" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Phone Number</label><input class="form-control" name="phone_number" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Email Address</label><input class="form-control" name="email" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Home Address</label><input class="form-control" name="home_address" value=""></div>
           </div>
         </div>
       </div>
@@ -70,16 +72,16 @@
         <div class="form-section-header teal">Institution Details</div>
         <div class="form-section-body">
           <div class="form-grid form-grid-4" style="margin-bottom:14px">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Level of Study</label><input class="form-control" value="Undergraduate"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Institution Name</label><input class="form-control" value="Univ. of Nairobi"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Faculty</label><input class="form-control" value="Engineering"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Admission Number</label><input class="form-control" value="ENG/2022/001"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Level of Study</label><select class="form-control" name="level_of_study"><option value="">Select</option><option value="Undergraduate">Undergraduate</option><option value="Masters">Masters</option><option value="PhD">PhD</option></select></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Institution Name</label><input class="form-control" name="institution_name" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Faculty</label><input class="form-control" name="faculty" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Admission Number</label><input class="form-control" name="admission_number" value=""></div>
           </div>
           <div class="form-grid form-grid-4">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Year of Admission</label><input class="form-control" value="2022"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Expected Completion</label><input class="form-control" value="2026"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Current Year</label><input class="form-control" value="3rd Year"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">GPA / Grade</label><input class="form-control" value="3.7 / 4.0"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Year of Admission</label><input class="form-control" name="year_of_admission" type="number" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Expected Completion</label><input class="form-control" name="expected_completion" type="number" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Current Year</label><input class="form-control" name="current_year" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">GPA / Grade</label><input class="form-control" name="gpa" value=""></div>
           </div>
         </div>
       </div>
@@ -89,22 +91,42 @@
         <div class="form-section-header gold">Loan Details</div>
         <div class="form-section-body">
           <div class="form-grid form-grid-3" style="margin-bottom:14px">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Loan Amount Requested (KES)</label><input class="form-control" value="250,000"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Purpose of Loan</label><input class="form-control" value="Tuition &amp; Living Expenses"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Estimated Total Cost (KES)</label><input class="form-control" value="320,000"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Loan Amount Requested (KES)</label><input class="form-control" name="loan_amount" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Purpose of Loan</label><input class="form-control" name="purpose" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Estimated Total Cost (KES)</label><input class="form-control" name="estimated_total_cost" value=""></div>
           </div>
           <div class="form-grid form-grid-4">
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Bank Name</label><input class="form-control" value="Equity Bank"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Account Number</label><input class="form-control" value="0123456789"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Branch</label><input class="form-control" value="Nairobi CBD"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-label">Supporting Notes</label><input class="form-control" value="See attached docs"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Bank Name</label><input class="form-control" name="bank_name" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Account Number</label><input class="form-control" name="account_number" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Branch</label><input class="form-control" name="branch" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Supporting Notes</label><input class="form-control" name="supporting_notes" value=""></div>
           </div>
         </div>
       </div>
 
+      <!-- Documents -->
+      <div class="form-section">
+        <div class="form-section-header purple">Required Documents</div>
+        <div class="form-section-body">
+          <div class="form-grid form-grid-2">
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Passport Copy</label><input class="form-control" type="file" name="passport" accept=".pdf,.jpg,.png"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Academic Transcript</label><input class="form-control" type="file" name="transcript" accept=".pdf,.jpg,.png"></div>
+          </div>
+          <div class="form-grid form-grid-2">
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Admission Letter</label><input class="form-control" type="file" name="admission" accept=".pdf,.jpg,.png"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Bank Statement</label><input class="form-control" type="file" name="bank_stmt" accept=".pdf,.jpg,.png"></div>
+          </div>
+          <div class="form-grid form-grid-2">
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Medical Certificate (Optional)</label><input class="form-control" type="file" name="medical" accept=".pdf,.jpg,.png"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">Other Documents</label><input class="form-control" type="file" name="other" accept=".pdf,.jpg,.png"></div>
+          </div>
+        </div>
+      </div>
+
+      </form>
+
       <div style="display:flex;justify-content:center;gap:14px;padding:10px 0 24px">
-        <button class="btn btn-ghost btn-lg">Save as Draft</button>
-        <button class="btn btn-navy btn-lg">Submit Application →</button>
+        <button type="submit" class="btn btn-navy btn-lg">Submit Application →</button>
       </div>
     </div>
   </div>

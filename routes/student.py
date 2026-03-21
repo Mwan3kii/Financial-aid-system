@@ -6,7 +6,8 @@ from models import (
     get_applications_by_student, get_application_by_id,
     create_application, get_documents_by_application,
     create_document, get_notifications_by_recipient,
-    mark_notification_read, count_unread_notifications
+    mark_notification_read, count_unread_notifications,
+    upsert_foreign_student
 )
 
 student_bp = Blueprint('student', __name__, url_prefix='/student')
@@ -46,28 +47,60 @@ def submit_application():
     student_id = session['user_id']
 
     if request.method == 'POST':
-        requested_amount   = request.form.get('loan_amount')
-        purpose_statement  = request.form.get('purpose')
-        institution        = request.form.get('institution')
-        program            = request.form.get('program')
-        loan_bank          = request.form.get('bank_name')
-        loan_account       = request.form.get('account_number')
+        # Get form data
+        first_name = request.form.get('first_name')
+        middle_name = request.form.get('middle_name')
+        last_name = request.form.get('last_name')
+        date_of_birth = request.form.get('date_of_birth')
+        gender = request.form.get('gender')
+        nationality = request.form.get('nationality')
+        marital_status = request.form.get('marital_status')
+        passport_number = request.form.get('passport_number')
+        phone_number = request.form.get('phone_number')
+        email = request.form.get('email')
+        home_address = request.form.get('home_address')
+        
+        level_of_study = request.form.get('level_of_study')
+        institution_name = request.form.get('institution_name')
+        faculty = request.form.get('faculty')
+        admission_number = request.form.get('admission_number')
+        year_of_admission = request.form.get('year_of_admission')
+        expected_completion = request.form.get('expected_completion')
+        current_year = request.form.get('current_year')
+        gpa = request.form.get('gpa')
+        
+        loan_amount = request.form.get('loan_amount')
+        purpose = request.form.get('purpose')
+        estimated_total_cost = request.form.get('estimated_total_cost')
+        bank_name = request.form.get('bank_name')
+        account_number = request.form.get('account_number')
+        branch = request.form.get('branch')
+        supporting_notes = request.form.get('supporting_notes')
 
         # Basic validation
-        if not requested_amount or not purpose_statement:
+        if not loan_amount or not purpose:
             flash('Loan amount and purpose are required.', 'error')
-            return render_template('student/submit_form.html')
+            return render_template('application_form.html')
 
         try:
-            amount = float(requested_amount.replace(',', ''))
+            amount = float(loan_amount.replace(',', ''))
         except ValueError:
             flash('Please enter a valid loan amount.', 'error')
-            return render_template('student/submit_form.html')
+            return render_template('application_form.html')
+
+        # Upsert foreign student details
+        student_data = {
+            'passport_number': passport_number,
+            'nationality': nationality,
+            'institution': institution_name,
+            'program_of_study': faculty,
+        }
+        upsert_foreign_student(student_id, **student_data)
 
         # Create application
         app_id = create_application(
-            student_id, amount, purpose_statement,
-            institution, program, loan_bank, loan_account
+            student_id, amount, purpose,
+            institution_name, faculty, bank_name, account_number
         )
 
         # Handle document uploads
@@ -78,6 +111,7 @@ def submit_application():
             'admission':   'ADMISSION',
             'bank_stmt':   'BANK_STATEMENT',
             'medical':     'MEDICAL',
+            'other':       'OTHER',
         }
         for field_name, doc_type in doc_fields.items():
             file = request.files.get(field_name)
@@ -93,7 +127,7 @@ def submit_application():
         flash('Application submitted successfully!', 'success')
         return redirect(url_for('student.app_status'))
 
-    return render_template('student/submit_form.html')
+    return render_template('application_form.html')
 
 
 # ── Screen 4: Notifications ───────────────────────────────────────
