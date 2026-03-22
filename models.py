@@ -187,15 +187,13 @@ def get_all_applications():
     return apps
 
 
-def create_application(student_id, requested_amount, purpose_statement,
-                        institution, program, loan_bank, loan_account):
+def create_application(student_id, requested_amount, purpose, institution, program):
     cur = mysql.connection.cursor()
     cur.execute("""
         INSERT INTO applications
-            (student_id, requested_amount, purpose_statement, status,
-             submitted_at, status_updated_at)
-        VALUES (%s, %s, %s, 'SUBMITTED', NOW(), NOW())
-    """, (student_id, requested_amount, purpose_statement))
+        (student_id, requested_amount, purpose, submitted_at, status)
+        VALUES (%s, %s, %s, NOW(), 'SUBMITTED')
+    """, (student_id, requested_amount, purpose))
     mysql.connection.commit()
     app_id = cur.lastrowid
     cur.close()

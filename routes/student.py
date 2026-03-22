@@ -47,6 +47,19 @@ def submit_application():
     student_id = session['user_id']
 
     if request.method == 'POST':
+        required_fields = [
+            'first_name', 'last_name', 'date_of_birth', 'gender', 'nationality',
+            'marital_status', 'passport_number', 'phone_number', 'email', 'home_address',
+            'level_of_study', 'institution_name', 'program_of_study', 'admission_number',
+            'year_of_admission', 'expected_completion', 'current_year', 'gpa',
+            'loan_amount', 'purpose'
+        ]
+
+        # ─── STEP 2: Check for missing fields ─────────────
+        missing_fields = [f for f in required_fields if not request.form.get(f)]
+        if missing_fields:
+            flash(f"Please fill in all required fields: {', '.join(missing_fields)}", 'error')
+            return render_template('application_form.html', form=request.form)
         # Get form data
         first_name = request.form.get('first_name')
         middle_name = request.form.get('middle_name')
@@ -62,8 +75,8 @@ def submit_application():
         
         level_of_study = request.form.get('level_of_study')
         institution_name = request.form.get('institution_name')
-        faculty = request.form.get('faculty')
         admission_number = request.form.get('admission_number')
+        program_of_study = request.form.get('program_of_study')
         year_of_admission = request.form.get('year_of_admission')
         expected_completion = request.form.get('expected_completion')
         current_year = request.form.get('current_year')
@@ -71,11 +84,6 @@ def submit_application():
         
         loan_amount = request.form.get('loan_amount')
         purpose = request.form.get('purpose')
-        estimated_total_cost = request.form.get('estimated_total_cost')
-        bank_name = request.form.get('bank_name')
-        account_number = request.form.get('account_number')
-        branch = request.form.get('branch')
-        supporting_notes = request.form.get('supporting_notes')
 
         # Basic validation
         if not loan_amount or not purpose:
@@ -92,15 +100,21 @@ def submit_application():
         student_data = {
             'passport_number': passport_number,
             'nationality': nationality,
+            'date_of_birth': date_of_birth,
             'institution': institution_name,
-            'program_of_study': faculty,
+            'program_of_study': program_of_study,
+            'home_country': home_address,
+            'gpa': gpa
         }
         upsert_foreign_student(student_id, **student_data)
 
         # Create application
         app_id = create_application(
-            student_id, amount, purpose,
-            institution_name, faculty, bank_name, account_number
+            student_id,
+            amount,
+            purpose,
+            institution_name,
+            program_of_study
         )
 
         # Handle document uploads

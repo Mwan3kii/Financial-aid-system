@@ -22,7 +22,7 @@
         View Applications
       </div>
       <div class="sidebar-spacer"></div>
-      <div class="sidebar-item logout">
+      <div class="sidebar-item logout" onclick="window.location.href='{{ url_for('auth.logout') }}'">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
         Logout
       </div>
@@ -54,13 +54,10 @@
               <th>#</th><th>Student Name</th><th>Application ID</th><th>Nationality</th><th>Submit Date</th><th>Loan (KES)</th><th>Status</th><th>Action</th>
             </tr></thead>
             <tbody>
-              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-221051</td><td>Kenyan</td><td>14 Feb 2025</td><td>250,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
-              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-224070</td><td>Ugandan</td><td>16 Feb 2025</td><td>180,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
-              <tr><td>3</td><td style="font-weight:500">John Kamau</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225001</td><td>Tanzanian</td><td>17 Feb 2025</td><td>320,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
-              <tr><td>4</td><td style="font-weight:500">Alice Njeri</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225020</td><td>Rwandan</td><td>18 Feb 2025</td><td>200,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
-              <tr><td>5</td><td style="font-weight:500">Peter Ochieng</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225045</td><td>Kenyan</td><td>19 Feb 2025</td><td>150,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
-              <tr><td>7</td><td style="font-weight:500">Brian Mwangi</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225078</td><td>Kenyan</td><td>21 Feb 2025</td><td>190,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
-              <tr><td>8</td><td style="font-weight:500">Sophia Kimani</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225099</td><td>Ugandan</td><td>22 Feb 2025</td><td>220,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='verification.html'">Review</button></td></tr>
+              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-221051</td><td>Kenyan</td><td>14 Feb 2025</td><td>250,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
+              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-224070</td><td>Ugandan</td><td>16 Feb 2025</td><td>180,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
+              <tr><td>3</td><td style="font-weight:500">John Kamau</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225001</td><td>Tanzanian</td><td>17 Feb 2025</td><td>320,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
+              <tr><td>4</td><td style="font-weight:500">Alice Njeri</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225020</td><td>Rwandan</td><td>18 Feb 2025</td><td>200,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
             </tbody>
           </table>
         </div>
