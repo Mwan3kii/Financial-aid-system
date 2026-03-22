@@ -11,6 +11,8 @@ def get_user_by_email(email):
     cur.execute("SELECT * FROM users WHERE email = %s", (email,))
     user = cur.fetchone()
     cur.close()
+    if user:
+        user['role'] = user['role']  # ensure role is always uppercase
     return user
 
 
@@ -19,6 +21,8 @@ def get_user_by_id(user_id):
     cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
     user = cur.fetchone()
     cur.close()
+    if user:
+        user['role'] = user['role']  # ensure role is always uppercase
     return user
 
 

@@ -16,7 +16,7 @@ bcrypt   = Bcrypt()
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if 'user_id' not in session or session['role'] != 'ADMIN':
+        if 'user_id' not in session or session['role'].upper() != 'ADMIN':
             flash('Access restricted to administrators.', 'error')
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
