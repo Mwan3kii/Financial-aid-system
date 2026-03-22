@@ -30,7 +30,7 @@ def manage_users():
     users      = get_all_users()
     role_stats = count_users_by_role()
     total      = sum(role_stats.values())
-    return render_template('admin/users.html',
+    return render_template('admin.html',
                            users=users,
                            role_stats=role_stats,
                            total=total)
@@ -43,7 +43,7 @@ def add_user():
     last_name  = request.form.get('last_name', '').strip()
     email      = request.form.get('email', '').strip()
     password   = request.form.get('password', '')
-    role       = request.form.get('role', 'STUDENT')
+    role       = request.form.get('role', 'OFFICER')
 
     if not all([first_name, last_name, email, password]):
         flash('All fields are required.', 'error')

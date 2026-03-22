@@ -1,4 +1,5 @@
 from flask_mysqldb import MySQL
+from MySQLdb.cursors import DictCursor
 
 mysql = MySQL()
 
@@ -6,7 +7,7 @@ mysql = MySQL()
 # ─── Users ───────────────────────────────────────────────────────
 
 def get_user_by_email(email):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("SELECT * FROM users WHERE email = %s", (email,))
     user = cur.fetchone()
     cur.close()
@@ -64,7 +65,7 @@ def update_user_status(user_id, is_active):
 
 
 def count_users_by_role():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT role, COUNT(*) as total
         FROM users

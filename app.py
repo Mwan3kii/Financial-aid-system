@@ -26,52 +26,52 @@ def create_app():
     def login():
         return render_template('login.html')
     
-    @app.route('/login', methods=['POST'])
-    def login_submit():
-        try:
-            email = request.form.get('email')
-            password = request.form.get('password')
+    # @app.route('/login', methods=['POST'])
+    # def login_submit():
+    #     try:
+    #         email = request.form.get('email')
+    #         password = request.form.get('password')
             
-            if not email or not password:
-                flash('Email and password required', 'error')
-                return redirect(url_for('login'))
+    #         if not email or not password:
+    #             flash('Email and password required', 'error')
+    #             return redirect(url_for('login'))
             
-            cursor = mysql.connection.cursor()
-            cursor.execute("SELECT user_id, password_hash, role FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
-            cursor.close()
+    #         cursor = mysql.connection.cursor()
+    #         cursor.execute("SELECT user_id, password_hash, role FROM users WHERE email = %s", (email,))
+    #         user = cursor.fetchone()
+    #         cursor.close()
             
-            if not user:
-                flash('Invalid email or password', 'error')
-                return redirect(url_for('login'))
+    #         if not user:
+    #             flash('Invalid email or password', 'error')
+    #             return redirect(url_for('login'))
             
-            # Check password
-            if not auth_bcrypt.check_password_hash(user[1], password):
-                flash('Invalid email or password', 'error')
-                return redirect(url_for('login'))
+    #         # Check password
+    #         if not auth_bcrypt.check_password_hash(user[1], password):
+    #             flash('Invalid email or password', 'error')
+    #             return redirect(url_for('login'))
             
-            # Redirect based on role (strip whitespace and convert to lowercase)
-            role = str(user[2]).strip().lower()
+    #         # Redirect based on role (strip whitespace and convert to lowercase)
+    #         role = str(user[2]).strip().lower()
             
-            if role == 'student':
-                flash('Welcome back!', 'success')
-                return redirect(url_for('status'))
-            elif role == 'officer':
-                flash('Welcome back!', 'success')
-                return redirect(url_for('officer_dashboard'))
-            elif role == 'provider':
-                flash('Welcome back!', 'success')
-                return redirect(url_for('provider_dashboard'))
-            elif role == 'admin':
-                flash('Welcome back!', 'success')
-                return redirect(url_for('admin_dashboard'))
-            else:
-                flash(f'Unknown role: {role}', 'error')
-                return redirect(url_for('landing'))
+    #         if role == 'student':
+    #             flash('Welcome back!', 'success')
+    #             return redirect(url_for('status'))
+    #         elif role == 'officer':
+    #             flash('Welcome back!', 'success')
+    #             return redirect(url_for('officer_dashboard'))
+    #         elif role == 'provider':
+    #             flash('Welcome back!', 'success')
+    #             return redirect(url_for('provider_dashboard'))
+    #         elif role == 'admin':
+    #             flash('Welcome back!', 'success')
+    #             return redirect(url_for('admin_dashboard'))
+    #         else:
+    #             flash(f'Unknown role: {role}', 'error')
+    #             return redirect(url_for('landing'))
         
-        except Exception as e:
-            flash(f'Login error: {str(e)}', 'error')
-            return redirect(url_for('login'))
+    #     except Exception as e:
+    #         flash(f'Login error: {str(e)}', 'error')
+    #         return redirect(url_for('login'))
     
     @app.route('/signup')
     def signup():

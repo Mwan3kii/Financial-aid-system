@@ -60,7 +60,7 @@
           {% endfor %}
         {% endif %}
       {% endwith %}
-      <form method="POST" action="{{ url_for('login_submit') }}">
+      <form method="POST" action="{{ url_for('auth.login') }}">
         <div class="form-group">
           <label class="form-label">Email Address</label>
           <input class="form-control" type="email" name="email" placeholder="Enter your email" required>
