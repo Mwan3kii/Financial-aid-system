@@ -46,46 +46,53 @@
         <div class="page-title-bar"></div>
         <div class="page-subtitle">Track your application and document verification progress</div>
       </div>
-
       <!-- Summary -->
+      {% for app in applications %}
       <div class="card" style="margin-bottom:18px">
         <div class="card-header">Application Summary</div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-            <div><div class="form-label">Application ID</div><div style="font-size:15px;font-weight:600;color:var(--navy)">APP-123555</div></div>
-            <div><div class="form-label">Submission Date</div><div style="font-size:15px;font-weight:600;color:var(--navy)">14th February 2025</div></div>
-            <div><div class="form-label">Overall Status</div><span class="pill under-review">Under Review</span></div>
-            <div><div class="form-label">Loan Amount</div><div style="font-size:15px;font-weight:600;color:var(--navy)">KES 250,000</div></div>
-            <div><div class="form-label">Institution</div><div style="font-size:15px;font-weight:600;color:var(--navy)">University of Nairobi</div></div>
-            <div><div class="form-label">Programme</div><div style="font-size:15px;font-weight:600;color:var(--navy)">B.Sc. Engineering</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Progress -->
-      <div class="card" style="margin-bottom:18px">
-        <div class="card-header gold">Application Progress</div>
-        <div class="card-body">
-          <div class="progress-track">
-            <div class="progress-step done">
-              <div class="progress-dot done">✓</div>
-              <div class="progress-text">Submitted</div>
+            <div>
+              <div class="form-label">Application ID</div>
+              <div style="font-size:15px;font-weight:600;color:var(--navy)">
+                APP-{{ app.application_id }}
+              </div>
             </div>
-            <div class="progress-step done">
-              <div class="progress-dot done">✓</div>
-              <div class="progress-text">Embassy Review</div>
+            <div>
+              <div class="form-label">Submission Date</div>
+              <div style="font-size:15px;font-weight:600;color:var(--navy)">
+                {{ app.submitted_at.strftime('%d %B %Y') }}
+              </div>
             </div>
-            <div class="progress-step">
-              <div class="progress-dot current">3</div>
-              <div class="progress-text" style="color:var(--navy);font-weight:600">Verified</div>
+            <div>
+              <div class="form-label">Overall Status</div>
+              {% if app.status == 'SUBMITTED' %}
+                <span class="pill under-review">Under Review</span>
+              {% elif app.status == 'VERIFIED' %}
+                <span class="pill verified">Verified</span>
+              {% elif app.status == 'REJECTED' %}
+                <span class="pill rejected">Rejected</span>
+              {% else %}
+                <span class="pill pending">{{ app.status }}</span>
+              {% endif %}
             </div>
-            <div class="progress-step">
-              <div class="progress-dot">4</div>
-              <div class="progress-text">Assessment</div>
+            <div>
+              <div class="form-label">Loan Amount</div>
+              <div style="font-size:15px;font-weight:600;color:var(--navy)">
+                KES {{ "{:,.0f}".format(app.requested_amount) }}
+              </div>
             </div>
-            <div class="progress-step">
-              <div class="progress-dot">5</div>
-              <div class="progress-text">Decision</div>
+            <div>
+              <div class="form-label">Institution</div>
+              <div style="font-size:15px;font-weight:600;color:var(--navy)">
+                {{ app.institution }}
+              </div>
+            </div>
+            <div>
+              <div class="form-label">Programme</div>
+              <div style="font-size:15px;font-weight:600;color:var(--navy)">
+                {{ app.program_of_study or '—' }}
+              </div>
             </div>
           </div>
         </div>
@@ -96,19 +103,41 @@
         <div class="card-header teal">Documents</div>
         <div class="table-wrap">
           <table>
-            <thead><tr>
-              <th>Document</th><th>Type</th><th>Upload Date</th><th>Verified By</th><th>Status</th>
-            </tr></thead>
+            <thead>
+              <tr>
+                <th>Document</th><th>Type</th><th>Upload Date</th><th>Verified By</th><th>Status</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td style="font-weight:500">Passport Photo</td><td>Identity</td><td>10 Feb 2025</td><td>Off. J. Kariuki</td><td><span class="pill verified">Verified</span></td></tr>
-              <tr><td style="font-weight:500">Academic Transcript</td><td>Academic</td><td>10 Feb 2025</td><td>Off. J. Kariuki</td><td><span class="pill verified">Verified</span></td></tr>
-              <tr><td style="font-weight:500">Admission Letter</td><td>Academic</td><td>11 Feb 2025</td><td>—</td><td><span class="pill pending">Pending</span></td></tr>
-              <tr><td style="font-weight:500">Bank Statement</td><td>Financial</td><td>11 Feb 2025</td><td>Off. J. Kariuki</td><td><span class="pill rejected">Rejected</span></td></tr>
-              <tr><td style="font-weight:500">Medical Certificate</td><td>Medical</td><td>12 Feb 2025</td><td>—</td><td><span class="pill pending">Pending</span></td></tr>
+              {% for doc in app.documents %}
+              <tr>
+                <td style="font-weight:500">{{ doc.file_name }}</td>
+                <td>{{ doc.document_type }}</td>
+                <td>{{ doc.uploaded_at.strftime('%d %b %Y') }}</td>
+                <td>
+                  {% if doc.verified_by_first %}
+                    {{ doc.verified_by_first }} {{ doc.verified_by_last }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>
+                  {% if doc.verification_status == 'VERIFIED' %}
+                    <span class="pill verified">Verified</span>
+                  {% elif doc.verification_status == 'REJECTED' %}
+                    <span class="pill rejected">Rejected</span>
+                  {% else %}
+                    <span class="pill pending">Pending</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
       </div>
+      {% endfor %}
+      
     </div>
   </div>
 </div>

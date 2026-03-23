@@ -29,16 +29,22 @@ def student_required(f):
 @student_required
 def app_status():
     student_id = session['user_id']
-    apps  = get_applications_by_student(student_id)
-    app   = apps[0] if apps else None
-    docs  = get_documents_by_application(app['application_id']) if app else []
+    print("Current student_id in session:", student_id)
+    # Get all applications for this student
+    applications = get_applications_by_student(student_id)
+    
+    # Include documents for each application
+    for app in applications:
+        app['documents'] = get_documents_by_application(app['application_id'])
+    
+    # Count unread notifications
     unread = count_unread_notifications(student_id)
 
-    return render_template('student/app_status.html',
-                           application=app,
-                           documents=docs,
-                           unread=unread)
-
+    return render_template(
+        'application_status.html',
+        applications=applications,
+        unread=unread
+    )
 
 # ── Screen 3: Submit Application Form ────────────────────────────
 @student_bp.route('/submit', methods=['GET', 'POST'])
@@ -55,11 +61,11 @@ def submit_application():
             'loan_amount', 'purpose'
         ]
 
-        # ─── STEP 2: Check for missing fields ─────────────
-        missing_fields = [f for f in required_fields if not request.form.get(f)]
+        missing_fields = [f for f in required_fields if not request.form.get(f, '').strip()]
         if missing_fields:
             flash(f"Please fill in all required fields: {', '.join(missing_fields)}", 'error')
             return render_template('application_form.html', form=request.form)
+        
         # Get form data
         first_name = request.form.get('first_name')
         middle_name = request.form.get('middle_name')
@@ -113,8 +119,6 @@ def submit_application():
             student_id,
             amount,
             purpose,
-            institution_name,
-            program_of_study
         )
 
         # Handle document uploads

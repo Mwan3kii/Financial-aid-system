@@ -98,7 +98,7 @@ def get_student_by_user_id(user_id):
 # ─── Applications ─────────────────────────────────────────────────
 
 def get_applications_by_student(student_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*,
                fs.passport_number,
@@ -121,7 +121,7 @@ def get_applications_by_student(student_id):
 
 
 def get_application_by_id(application_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*,
                u.first_name, u.last_name, u.email,
@@ -139,7 +139,7 @@ def get_application_by_id(application_id):
 
 def get_pending_applications():
     """For embassy officer — all SUBMITTED/UNDER_REVIEW apps."""
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*, u.first_name, u.last_name,
                fs.nationality, fs.institution
@@ -173,7 +173,7 @@ def get_verified_applications():
 
 def get_all_applications():
     """For admin."""
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*, u.first_name, u.last_name,
                fs.institution, fs.nationality
@@ -187,13 +187,13 @@ def get_all_applications():
     return apps
 
 
-def create_application(student_id, requested_amount, purpose, institution, program):
+def create_application(student_id, amount, purpose):
     cur = mysql.connection.cursor()
     cur.execute("""
         INSERT INTO applications
         (student_id, requested_amount, purpose, submitted_at, status)
         VALUES (%s, %s, %s, NOW(), 'SUBMITTED')
-    """, (student_id, requested_amount, purpose))
+    """, (student_id, amount, purpose))
     mysql.connection.commit()
     app_id = cur.lastrowid
     cur.close()
