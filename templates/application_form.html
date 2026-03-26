@@ -30,7 +30,7 @@
         Notifications
       </a>
       <div class="sidebar-spacer"></div>
-      <div class="sidebar-item logout">
+      <div class="sidebar-item logout" onclick="window.location.href='{{ url_for('auth.logout') }}'">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,11 14,8 11,5"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
         Logout
       </div>
