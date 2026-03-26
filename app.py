@@ -132,13 +132,13 @@ def create_app():
     #     return render_template('notifications.html')
     
     # Officer routes
-    @app.route('/officer/dashboard')
-    def officer_dashboard():
-        return render_template('officer_dashboard.html')
+    # @app.route('/officer/dashboard')
+    # def officer_dashboard():
+    #     return render_template('officer_dashboard.html')
     
-    @app.route('/officer/verify')
-    def verify():
-        return render_template('verification.html')
+    # @app.route('/officer/verify')
+    # def verify():
+    #     return render_template('verification.html')
     
     # Provider routes
     @app.route('/provider/dashboard')

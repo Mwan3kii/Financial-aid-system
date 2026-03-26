@@ -32,13 +32,39 @@
         <div class="page-title">Pending Application List</div>
         <div class="page-title-bar"></div>
       </div>
-
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div style="padding:12px 14px;border-radius:6px;margin-bottom:18px;
+                      font-size:13px;display:flex;align-items:center;gap:8px;
+                      {% if category == 'error' %}
+                        background:#fdeaea;color:#8b1a1a;border:1px solid #f0c0c0
+                      {% else %}
+                        background:#e6f5ec;color:#1a7a4a;border:1px solid #c0e8d0
+                      {% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
       <div class="stats-row stats-4">
-        <div class="stat-card navy"><div class="stat-val navy">14</div><div class="stat-label">Total Pending</div></div>
-        <div class="stat-card green"><div class="stat-val green">6</div><div class="stat-label">Verified Today</div></div>
-        <div class="stat-card red"><div class="stat-val red">2</div><div class="stat-label">Rejected</div></div>
-        <div class="stat-card amber"><div class="stat-val amber">6</div><div class="stat-label">Awaiting Docs</div></div>
+      <div class="stat-card navy">
+        <div class="stat-val navy">{{ stats.pending }}</div>
+        <div class="stat-label">Total Pending</div>
       </div>
+      <div class="stat-card green">
+        <div class="stat-val green">{{ stats.verified }}</div>
+        <div class="stat-label">Verified</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-val red">{{ stats.rejected }}</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-val gold">{{ stats.docs_req }}</div>
+        <div class="stat-label">Awaiting Docs</div>
+      </div>
+    </div>
 
       <div class="search-bar">
         <span class="search-icon">🔍</span>
@@ -54,10 +80,56 @@
               <th>#</th><th>Student Name</th><th>Application ID</th><th>Nationality</th><th>Submit Date</th><th>Loan (KES)</th><th>Status</th><th>Action</th>
             </tr></thead>
             <tbody>
-              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-221051</td><td>Kenyan</td><td>14 Feb 2025</td><td>250,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
-              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-224070</td><td>Ugandan</td><td>16 Feb 2025</td><td>180,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
-              <tr><td>3</td><td style="font-weight:500">John Kamau</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225001</td><td>Tanzanian</td><td>17 Feb 2025</td><td>320,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
-              <tr><td>4</td><td style="font-weight:500">Alice Njeri</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225020</td><td>Rwandan</td><td>18 Feb 2025</td><td>200,000</td><td><span class="pill pending">Pending</span></td><td><button class="btn btn-teal btn-sm" onclick="window.location.href='{{ url_for('verify') }}'">Review</button></td></tr>
+              {% for app in applications %}
+            <tr>
+              <td>{{ loop.index }}</td>
+ 
+              <td style="font-weight:500">
+                {{ app.first_name }} {{ app.last_name }}
+              </td>
+ 
+              <td style="font-family:'DM Mono',monospace;font-size:12px">
+                APP-{{ app.application_id }}
+              </td>
+ 
+              <td>{{ app.nationality or '—' }}</td>
+ 
+              <td style="color:var(--dim);font-size:12px">
+                {{ app.submitted_at.strftime('%d %b %Y') }}
+              </td>
+ 
+              <td style="font-family:'DM Mono',monospace;font-size:12px">
+                {{ "{:,.0f}".format(app.requested_amount) }}
+              </td>
+ 
+              <td>
+                {% if app.status == 'SUBMITTED' %}
+                  <span class="pill under-review">Submitted</span>
+                {% elif app.status == 'UNDER_REVIEW' %}
+                  <span class="pill under-review">Under Review</span>
+                {% elif app.status == 'DOCS_REQUESTED' %}
+                  <span class="pill pending">Docs Requested</span>
+                {% else %}
+                  <span class="pill pending">{{ app.status }}</span>
+                {% endif %}
+              </td>
+ 
+              <td>
+                <!-- Links to officer.review route with the real application_id -->
+                <a href="{{ url_for('officer.review', application_id=app.application_id) }}"
+                   class="btn btn-teal btn-sm">
+                  Review
+                </a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="8"
+                  style="text-align:center;padding:36px;color:var(--dim);font-size:13px">
+                No pending applications at this time.
+              </td>
+            </tr>
+            {% endfor %}
             </tbody>
           </table>
         </div>

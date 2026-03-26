@@ -7,6 +7,132 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="script.js"></script>
+<style>
+  /* ── Review panel two-column ────────────────────────────── */
+  .review-panel {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 18px;
+    align-items: start;
+  }
+ 
+  /* ── File rows ──────────────────────────────────────────── */
+  .file-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+  }
+  .file-row:last-child { border-bottom: none; }
+ 
+  .file-icon {
+    width: 38px; height: 38px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .file-icon.pdf { background: #fdeaea; color: #dc2626; }
+  .file-icon.img { background: #dbeafe; color: #1e40af; }
+  .file-icon.doc { background: #ede9fe; color: #7c3aed; }
+  .file-icon.other { background: var(--light, #f3f4f6); color: var(--dim, #6b7280); }
+ 
+  .file-name { font-size: 13px; font-weight: 500; color: var(--navy, #1e2a4a); }
+  .file-meta { font-size: 11px; color: var(--dim, #6b7280); margin-top: 2px; }
+  .file-actions { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }
+ 
+  /* ── Doc status badge on file row ───────────────────────── */
+  .doc-status {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 12px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .doc-status.verified  { background: #f0fdf4; color: #16a34a; }
+  .doc-status.rejected  { background: #fef2f2; color: #dc2626; }
+  .doc-status.pending   { background: #fef9c3; color: #854d0e; }
+ 
+  /* ── Radio decision cards ───────────────────────────────── */
+  .decision-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .decision-option { position: relative; }
+  .decision-option input[type="radio"] {
+    position: absolute; opacity: 0; width: 0; height: 0;
+  }
+  .decision-option label {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px;
+    border: 1.5px solid var(--border, #e5e7eb);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px; font-weight: 600;
+    transition: all 0.15s;
+  }
+  .decision-option.approve input:checked + label {
+    border-color: #16a34a;
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+  .decision-option.reject input:checked + label {
+    border-color: #dc2626;
+    background: #fef2f2;
+    color: #dc2626;
+  }
+  .decision-option label:hover {
+    border-color: var(--navy, #1e2a4a);
+    background: var(--light, #f3f4f6);
+  }
+ 
+  /* ── Doc request field — hidden unless Reject chosen ────── */
+  #doc-request-wrap {
+    display: none;
+    margin-top: 14px;
+  }
+  #doc-request-wrap.show { display: block; }
+ 
+  /* ── Alert ──────────────────────────────────────────────── */
+  .alert {
+    padding: 12px 14px; border-radius: 6px;
+    margin-bottom: 18px; font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .alert-error   { background: #fdeaea; color: #8b1a1a; border: 1px solid #f0c0c0; }
+  .alert-success { background: #e6f5ec; color: #1a7a4a; border: 1px solid #c0e8d0; }
+ 
+  /* ── Confirm modal ──────────────────────────────────────── */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px;
+    width: 400px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .modal-title {
+    font-size: 16px; font-weight: 600; color: var(--navy, #1e2a4a);
+    margin-bottom: 10px;
+  }
+  .modal-body  { font-size: 13px; color: var(--dim, #6b7280); line-height: 1.6; margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+ 
+  @media (max-width: 900px) {
+    .review-panel { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
     <div class="topbar">
@@ -32,17 +158,53 @@
         <div class="page-title">Student Document Review</div>
         <div class="page-title-bar"></div>
       </div>
-
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
       <div class="card" style="margin-bottom:18px">
         <div class="card-header">Application Summary</div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-            <div><div class="form-label">Application ID</div><div style="font-weight:600;color:var(--navy)">APP-123555</div></div>
-            <div><div class="form-label">Student Name</div><div style="font-weight:600;color:var(--navy)">Agatha Wanja</div></div>
-            <div><div class="form-label">Nationality</div><div style="font-weight:600;color:var(--navy)">Kenyan</div></div>
-            <div><div class="form-label">Institution</div><div style="font-weight:600;color:var(--navy)">University of Nairobi</div></div>
-            <div><div class="form-label">Loan Requested</div><div style="font-weight:600;color:var(--navy)">KES 250,000</div></div>
-            <div><div class="form-label">Submitted</div><div style="font-weight:600;color:var(--navy)">14 Feb 2025</div></div>
+            <div>
+            <div class="form-label">Application ID</div>
+            <div style="font-weight:600;color:var(--navy);
+                        font-family:'DM Mono',monospace;font-size:13px">
+              APP-{{ application.application_id }}
+            </div>
+          </div>
+          <div>
+            <div class="form-label">Student Name</div>
+            <div style="font-weight:600;color:var(--navy)">
+              {{ application.first_name }} {{ application.last_name }}
+            </div>
+          </div>
+          <div>
+            <div class="form-label">Nationality</div>
+            <div style="font-weight:600;color:var(--navy)">
+              {{ application.nationality or '—' }}
+            </div>
+          </div>
+          <div>
+            <div class="form-label">Institution</div>
+            <div style="font-weight:600;color:var(--navy)">
+              {{ application.institution or '—' }}
+            </div>
+          </div>
+          <div>
+            <div class="form-label">Loan Requested</div>
+            <div style="font-weight:600;color:var(--navy)">
+              KES {{ "{:,.0f}".format(application.requested_amount) }}
+            </div>
+          </div>
+          <div>
+            <div class="form-label">Submitted</div>
+            <div style="font-weight:600;color:var(--navy)">
+              {{ application.submitted_at.strftime('%d %b %Y') }}
+            </div>
           </div>
         </div>
       </div>
@@ -50,61 +212,228 @@
       <div class="review-panel">
         <!-- Documents -->
         <div class="card">
-          <div class="card-header teal">Submitted Documents</div>
-          <div class="card-body" style="padding:14px">
-            <div class="file-row">
-              <div class="file-icon pdf">PDF</div>
-              <div><div class="file-name">Application Form</div><div class="file-meta">application_form.pdf · 620 KB</div></div>
-              <div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div>
-            </div>
-            <div class="file-row">
-              <div class="file-icon img">IMG</div>
-              <div><div class="file-name">Passport Photo</div><div class="file-meta">passport.png · 1.2 MB</div></div>
-              <div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div>
-            </div>
-            <div class="file-row">
-              <div class="file-icon pdf">PDF</div>
-              <div><div class="file-name">Admission Letter</div><div class="file-meta">admission_letter.pdf · 380 KB</div></div>
-              <div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div>
-            </div>
-            <div class="file-row">
-              <div class="file-icon pdf">PDF</div>
-              <div><div class="file-name">Academic Transcript</div><div class="file-meta">transcript.pdf · 890 KB</div></div>
-              <div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div>
-            </div>
-            <div class="file-row">
-              <div class="file-icon pdf">PDF</div>
-              <div><div class="file-name">Bank Statement</div><div class="file-meta">bank_statement.pdf · 510 KB</div></div>
-              <div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div>
-            </div>
-          </div>
+        <div class="card-header teal">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+               stroke="currentColor" stroke-width="1.8">
+            <path d="M9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6z"/>
+            <polyline points="9,2 9,6 13,6"/>
+          </svg>
+          Submitted Documents
+          <span style="margin-left:auto;font-size:11px;color:var(--teal);
+                       text-transform:none;letter-spacing:0;font-weight:400;opacity:.8">
+            {{ documents|length }} file{{ 's' if documents|length != 1 }}
+          </span>
         </div>
-
-        <!-- Decision -->
-        <div class="card">
-          <div class="card-header gold">Verification Decision</div>
-          <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">Decision</label>
-              <div class="radio-group">
-                <label class="radio-label" style="color:var(--green)"><input type="radio" name="vdec" checked> Approve</label>
-                <label class="radio-label" style="color:var(--red)"><input type="radio" name="vdec"> Reject</label>
+        <div class="card-body" style="padding:14px">
+ 
+          {% for doc in documents %}
+          {% set ext = doc.file_name.rsplit('.', 1)[-1].lower() if '.' in doc.file_name else '' %}
+          <div class="file-row">
+ 
+            <!-- Icon based on extension -->
+            <div class="file-icon
+              {% if ext == 'pdf' %}pdf
+              {% elif ext in ['png','jpg','jpeg','webp'] %}img
+              {% elif ext in ['doc','docx'] %}doc
+              {% else %}other{% endif %}">
+              {% if ext == 'pdf' %}PDF
+              {% elif ext in ['png','jpg','jpeg','webp'] %}IMG
+              {% elif ext in ['doc','docx'] %}DOC
+              {% else %}FILE{% endif %}
+            </div>
+ 
+            <div style="flex:1;min-width:0">
+              <div class="file-name" style="overflow:hidden;text-overflow:ellipsis;
+                                            white-space:nowrap">
+                {{ doc.file_name }}
+              </div>
+              <div class="file-meta">
+                {{ doc.document_type }}
+                {% if doc.file_size_bytes %}
+                  · {{ "%.1f"|format(doc.file_size_bytes / 1024) }} KB
+                {% endif %}
               </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Verification Comments</label>
-              <textarea class="form-control" rows="5" style="resize:vertical">All documents have been verified and appear authentic. Passport details match the application data. Academic transcript is from an accredited institution.</textarea>
+ 
+            <!-- Current verification status -->
+            <div>
+              {% if doc.verification_status == 'VERIFIED' %}
+                <span class="doc-status verified">Verified</span>
+              {% elif doc.verification_status == 'REJECTED' %}
+                <span class="doc-status rejected">Rejected</span>
+              {% else %}
+                <span class="doc-status pending">Pending</span>
+              {% endif %}
             </div>
-            <div class="form-group">
-              <label class="form-label">Request Additional Documents</label>
-              <input class="form-control" placeholder="Specify any missing documents...">
+ 
+            <!-- View button — links to the uploaded file -->
+            <div class="file-actions">
+              <a href="{{ url_for('static', filename=doc.storage_path.replace('static/', '', 1).replace('\\', '/')) }}"
+                 target="_blank" class="btn btn-teal btn-sm">
+                View
+              </a>
             </div>
-            <button class="btn btn-navy btn-lg" style="width:100%;justify-content:center;margin-top:8px">Submit Verification Decision</button>
+ 
           </div>
+          {% else %}
+          <div style="text-align:center;padding:28px;color:var(--dim);font-size:13px">
+            No documents uploaded for this application.
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Decision -->
+      <div class="card">
+        <div class="card-header gold">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+               stroke="currentColor" stroke-width="1.8">
+            <polyline points="1,9 5,13 15,3"/>
+          </svg>
+          Verification Decision
+        </div>
+        <div class="card-body">
+ 
+          <!--
+            CRITICAL: form fields must match what officer.py reads:
+              request.form.get('decision')    → 'APPROVE' or 'REJECT'
+              request.form.get('comments')    → verification comments
+              request.form.get('doc_request') → missing docs description
+          -->
+          <form id="reviewForm" method="POST"
+                action="{{ url_for('officer.review', application_id=application.application_id) }}">
+ 
+            <!-- Decision radio cards -->
+            <div class="form-group">
+              <label class="form-label">Decision</label>
+              <div class="decision-group">
+                <div class="decision-option approve">
+                  <input type="radio" name="decision" id="dec-approve"
+                         value="APPROVE" checked onchange="onDecisionChange()">
+                  <label for="dec-approve">
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                      <polyline points="2,8 6,12 14,4"/>
+                    </svg>
+                    Approve
+                  </label>
+                </div>
+                <div class="decision-option reject">
+                  <input type="radio" name="decision" id="dec-reject"
+                         value="REJECT" onchange="onDecisionChange()">
+                  <label for="dec-reject">
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                      <line x1="3" y1="3" x2="13" y2="13"/>
+                      <line x1="13" y1="3" x2="3" y2="13"/>
+                    </svg>
+                    Reject
+                  </label>
+                </div>
+              </div>
+            </div>
+ 
+            <!-- Verification comments — always visible -->
+            <div class="form-group" style="margin-top:16px">
+              <label class="form-label" for="comments">Verification Comments</label>
+              <textarea class="form-control" id="comments" name="comments"
+                        rows="5" style="resize:vertical"
+                        placeholder="Describe your verification findings..."></textarea>
+            </div>
+ 
+            <!-- Doc request field — only shown when Reject is selected -->
+            <div id="doc-request-wrap">
+              <div class="form-group">
+                <label class="form-label" for="doc_request">
+                  Request Additional Documents
+                </label>
+                <input class="form-control" id="doc_request" name="doc_request"
+                       placeholder="List the specific missing documents required...">
+                <div style="font-size:11px;color:var(--dim);margin-top:5px">
+                  Filling this will set status to <strong>Docs Requested</strong>
+                  instead of Rejected.
+                </div>
+              </div>
+            </div>
+ 
+            <!-- Submit -->
+            <button type="button"
+                    class="btn btn-navy btn-lg"
+                    style="width:100%;justify-content:center;margin-top:18px"
+                    onclick="openConfirmModal()">
+              Submit Verification Decision
+            </button>
+ 
+          </form>
         </div>
       </div>
     </div>
+ 
+<!-- ── Confirm modal ──────────────────────────────────────────── -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Confirm Decision</div>
+    <div class="modal-body" id="modalBody">
+      Are you sure you want to submit this verification decision?
+      This will update the application status and notify the student.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()">
+        Cancel
+      </button>
+      <button class="btn btn-navy btn-sm" id="modalConfirmBtn"
+              onclick="document.getElementById('reviewForm').submit()">
+        Confirm &amp; Submit
+      </button>
+    </div>
   </div>
 </div>
+ 
+<script>
+  // Show/hide doc request field based on decision
+  function onDecisionChange() {
+    const isReject = document.getElementById('dec-reject').checked;
+    const wrap     = document.getElementById('doc-request-wrap');
+    wrap.classList.toggle('show', isReject);
+  }
+ 
+  // Open confirm modal — update copy based on decision
+  function openConfirmModal() {
+    const isApprove = document.getElementById('dec-approve').checked;
+    const comments  = document.getElementById('comments').value.trim();
+    const docReq    = document.getElementById('doc_request')?.value.trim();
+ 
+    if (!comments) {
+      alert('Please enter verification comments before submitting.');
+      return;
+    }
+ 
+    const title = isApprove ? 'Confirm Approval' : 'Confirm Rejection';
+    const body  = isApprove
+      ? 'You are about to <strong>approve</strong> this application. All documents will be marked as verified and the application will be forwarded. The student will be notified.'
+      : (docReq
+          ? 'You are about to request <strong>additional documents</strong>. The student will be notified to upload the specified documents.'
+          : 'You are about to <strong>reject</strong> this application. All documents will be marked as rejected and the student will be notified.');
+ 
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML    = body;
+ 
+    const btn = document.getElementById('modalConfirmBtn');
+    btn.className = isApprove
+      ? 'btn btn-teal btn-sm'
+      : 'btn btn-red btn-sm';
+ 
+    document.getElementById('confirmModal').classList.add('open');
+  }
+ 
+  function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.remove('open');
+  }
+ 
+  // Close on backdrop click
+  document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirmModal();
+  });
+</script>
 </body>
 </html>

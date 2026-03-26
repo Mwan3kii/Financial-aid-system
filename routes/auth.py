@@ -60,7 +60,7 @@ def logout():
 def redirect_by_role(role):
     destinations = {
         'STUDENT':  'student.app_status',
-        'OFFICER':  'office.officer_dashboard',
+        'OFFICER':  'officer.officer_dashboard',
         'PROVIDER': 'provider_dashboard',
         'ADMIN':    'admin_dashboard',
     }

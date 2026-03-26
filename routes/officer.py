@@ -24,7 +24,7 @@ def officer_required(f):
 # ── Screen 5: Officer Dashboard ───────────────────────────────────
 @officer_bp.route('/dashboard')
 @officer_required
-def dashboard():
+def officer_dashboard():
     apps   = get_pending_applications()
     counts = count_applications_by_status()
     stats  = {
@@ -33,7 +33,7 @@ def dashboard():
         'rejected': counts.get('REJECTED', 0),
         'docs_req': counts.get('DOCS_REQUESTED', 0),
     }
-    return render_template('officer/dashboard.html',
+    return render_template('officer_dashboard.html',
                            applications=apps,
                            stats=stats)
 
@@ -48,7 +48,7 @@ def review(application_id):
 
     if not app:
         flash('Application not found.', 'error')
-        return redirect(url_for('officer.dashboard'))
+        return redirect(url_for('officer.officer_dashboard'))
 
     if request.method == 'POST':
         decision       = request.form.get('decision')       # 'APPROVE' or 'REJECT'
@@ -93,8 +93,8 @@ def review(application_id):
         )
 
         flash(f'Application {new_status.replace("_"," ").title()}.', 'success')
-        return redirect(url_for('officer.dashboard'))
+        return redirect(url_for('officer.officer_dashboard'))
 
-    return render_template('officer/review.html',
+    return render_template('verification.html',
                            application=app,
                            documents=docs)
