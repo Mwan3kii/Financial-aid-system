@@ -17,11 +17,11 @@
   <div class="shell">
     <nav class="sidebar">
       <div class="sidebar-section">Student</div>
-      <a href="{{ url_for('apply') }}" class="sidebar-item">
+      <a href="{{ url_for('student.submit_application') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="1" width="12" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/></svg>
         Submit Application
       </a>
-      <a href="{{ url_for('status') }}" class="sidebar-item">
+      <a href="{{ url_for('student.app_status') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
         View Application
       </a>

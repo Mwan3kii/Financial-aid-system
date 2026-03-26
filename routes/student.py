@@ -32,7 +32,7 @@ def app_status():
     print("Current student_id in session:", student_id)
     # Get all applications for this student
     applications = get_applications_by_student(student_id)
-    
+    print("DEBUG applications:", applications)
     # Include documents for each application
     for app in applications:
         app['documents'] = get_documents_by_application(app['application_id'])
@@ -155,7 +155,7 @@ def notifications():
     user_id = session['user_id']
     notifs  = get_notifications_by_recipient(user_id)
     unread  = sum(1 for n in notifs if not n['is_read'])
-    return render_template('student/notifications.html',
+    return render_template('notifications.html',
                            notifications=notifs,
                            unread_count=unread)
 

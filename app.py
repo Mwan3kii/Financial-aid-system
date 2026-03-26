@@ -80,12 +80,13 @@ def create_app():
     @app.route('/signup', methods=['POST'])
     def signup_submit():
         try:
-            username = request.form.get('username')
+            firstname = request.form.get('first_name')
+            lastname = request.form.get('last_name')
             email = request.form.get('email')
             password = request.form.get('password')
             
             # Validation
-            if not username or not email or not password:
+            if not firstname or not lastname or not email or not password:
                 flash('All fields are required', 'error')
                 return redirect(url_for('signup'))
             
@@ -104,8 +105,8 @@ def create_app():
             # Hash password and create user
             hashed_password = auth_bcrypt.generate_password_hash(password).decode('utf-8')
             cursor.execute(
-                "INSERT INTO users (first_name, email, password_hash, role) VALUES (%s, %s, %s, %s)",
-                (username, email, hashed_password, 'student')
+                "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (%s, %s, %s, %s, %s)",
+                (firstname, lastname, email, hashed_password, 'student')
             )
             mysql.connection.commit()
             cursor.close()
@@ -118,17 +119,17 @@ def create_app():
             return redirect(url_for('signup'))
     
     # Student routes
-    @app.route('/student/apply')
-    def apply():
-        return render_template('application_form.html')
+    # @app.route('/student/apply')
+    # def apply():
+    #     return render_template('application_form.html')
     
-    @app.route('/student/status')
-    def status():
-        return render_template('application_status.html')
+    # @app.route('/student/status')
+    # def status():
+    #     return render_template('application_status.html')
     
-    @app.route('/student/notifications')
-    def student_notifications():
-        return render_template('notifications.html')
+    # @app.route('/student/notifications')
+    # def student_notifications():
+    #     return render_template('notifications.html')
     
     # Officer routes
     @app.route('/officer/dashboard')
@@ -149,9 +150,9 @@ def create_app():
     def admin_dashboard():
         return render_template('admin.html')
     
-    @app.route('/admin/manage')
-    def manage_applications():
-        return render_template('manage_applications.html')
+    # @app.route('/admin/manage')
+    # def manage_applications():
+    #     return render_template('manage_applications.html')
     
     @app.route('/admin/assessment')
     def assessment():

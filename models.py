@@ -17,7 +17,7 @@ def get_user_by_email(email):
 
 
 def get_user_by_id(user_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
     user = cur.fetchone()
     cur.close()
@@ -27,7 +27,7 @@ def get_user_by_id(user_id):
 
 
 def get_all_users():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT u.user_id, u.first_name, u.last_name, u.email,
                u.role, u.is_active, u.created_at
@@ -40,7 +40,7 @@ def get_all_users():
 
 
 def create_user(first_name, last_name, email, password_hash, role):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         INSERT INTO users (first_name, last_name, email, password_hash, role)
         VALUES (%s, %s, %s, %s, %s)
@@ -52,14 +52,27 @@ def create_user(first_name, last_name, email, password_hash, role):
 
 
 def delete_user(user_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
+    mysql.connection.commit()
+    cur.close()
+
+def update_user(user_id, first_name, last_name, email, role):
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        UPDATE users
+        SET first_name = %s,
+            last_name  = %s,
+            email      = %s,
+            role       = %s
+        WHERE user_id = %s
+    """, (first_name, last_name, email, role, user_id))
     mysql.connection.commit()
     cur.close()
 
 
 def update_user_status(user_id, is_active):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute(
         "UPDATE users SET is_active = %s WHERE user_id = %s",
         (is_active, user_id)
@@ -83,7 +96,7 @@ def count_users_by_role():
 # ─── Foreign Students ─────────────────────────────────────────────
 
 def get_student_by_user_id(user_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT fs.*, u.first_name, u.last_name, u.email
         FROM foreign_students fs
@@ -102,12 +115,14 @@ def get_applications_by_student(student_id):
     cur.execute("""
         SELECT a.*,
                fs.passport_number,
+               fs.institution,
+               fs.program_of_study,
                u.first_name, u.last_name,
                u_off.first_name AS officer_first,
                u_off.last_name  AS officer_last
         FROM applications a
-        JOIN foreign_students fs ON a.student_id = fs.student_id
-        JOIN users u             ON fs.student_id = u.user_id
+        LEFT JOIN foreign_students fs ON a.student_id = fs.student_id  -- ← LEFT JOIN
+        JOIN users u             ON a.student_id = u.user_id           -- ← join on users directly
         LEFT JOIN verification_officers vo
                ON a.assigned_officer_id = vo.officer_id
         LEFT JOIN users u_off
@@ -119,7 +134,6 @@ def get_applications_by_student(student_id):
     cur.close()
     return apps
 
-
 def get_application_by_id(application_id):
     cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
@@ -128,8 +142,8 @@ def get_application_by_id(application_id):
                fs.passport_number, fs.nationality, fs.institution,
                fs.program_of_study
         FROM applications a
-        JOIN foreign_students fs ON a.student_id = fs.student_id
-        JOIN users u             ON fs.student_id = u.user_id
+        LEFT JOIN foreign_students fs ON a.student_id = fs.student_id  -- changed to LEFT JOIN
+        JOIN users u ON a.student_id = u.user_id
         WHERE a.application_id = %s
     """, (application_id,))
     app = cur.fetchone()
@@ -156,7 +170,7 @@ def get_pending_applications():
 
 def get_verified_applications():
     """For provider — all VERIFIED/FORWARDED apps."""
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*, u.first_name, u.last_name,
                fs.nationality, fs.institution
@@ -188,7 +202,7 @@ def get_all_applications():
 
 
 def create_application(student_id, amount, purpose):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         INSERT INTO applications
         (student_id, requested_amount, purpose, submitted_at, status)
@@ -202,7 +216,7 @@ def create_application(student_id, amount, purpose):
 
 def upsert_foreign_student(student_id, **kwargs):
     """Insert or update foreign student details"""
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     
     # Check if student exists
     cur.execute("SELECT student_id FROM foreign_students WHERE student_id = %s", (student_id,))
@@ -234,7 +248,7 @@ def upsert_foreign_student(student_id, **kwargs):
 
 def update_application_status(application_id, new_status,
                                remarks='', officer_id=None):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     if officer_id:
         cur.execute("""
             UPDATE applications
@@ -256,7 +270,7 @@ def update_application_status(application_id, new_status,
 def save_assessment(application_id, provider_id, financial_score,
                     academic_score, need_score, decision_outcome,
                     approved_amount, justification):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         UPDATE applications SET
             assessed_by_id    = %s,
@@ -282,7 +296,7 @@ def save_assessment(application_id, provider_id, financial_score,
 
 
 def delete_application(application_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute(
         "DELETE FROM applications WHERE application_id = %s",
         (application_id,)
@@ -292,7 +306,7 @@ def delete_application(application_id):
 
 
 def count_applications_by_status():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT status, COUNT(*) as total
         FROM applications
@@ -306,7 +320,7 @@ def count_applications_by_status():
 # ─── Documents ────────────────────────────────────────────────────
 
 def get_documents_by_application(application_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT d.*,
                u.first_name AS verified_by_first,
@@ -342,7 +356,7 @@ def create_document(application_id, document_type,
 
 def update_document_status(document_id, status, officer_id,
                             rejection_reason=''):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         UPDATE documents
         SET verification_status = %s,
@@ -358,7 +372,7 @@ def update_document_status(document_id, status, officer_id,
 # ─── Notifications ────────────────────────────────────────────────
 
 def get_notifications_by_recipient(user_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT n.*,
                u.first_name AS sender_first,
@@ -391,7 +405,7 @@ def create_notification(application_id, sender_id, recipient_id,
 
 
 def mark_notification_read(notification_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute(
         "UPDATE notifications SET is_read = TRUE WHERE notification_id = %s",
         (notification_id,)
@@ -401,7 +415,7 @@ def mark_notification_read(notification_id):
 
 
 def count_unread_notifications(user_id):
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT COUNT(*) as total
         FROM notifications

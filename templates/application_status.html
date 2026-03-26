@@ -18,15 +18,15 @@
   <div class="shell">
     <nav class="sidebar">
       <div class="sidebar-section">Student</div>
-      <a href="{{ url_for('apply') }}" class="sidebar-item">
+      <a href="{{ url_for('student.submit_application') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 14V6l6-4 6 4v8H10V9H6v5H2z"/></svg>
         Submit Application
       </a>
-      <div class="sidebar-item active">
+      <a href="{{ url_for('student.app_status') }}" class="sidebar-item active">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>
         Application Status
-      </div>
-      <a href="{{ url_for('student_notifications') }}" class="sidebar-item">
+      </a>
+      <a href="{{ url_for('student.notifications') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H3a1 1 0 0 0-1 1v9l3-2h8a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg>
         Notifications
       </a>

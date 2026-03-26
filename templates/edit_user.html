@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFAMS — Edit User</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  .edit-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .edit-header a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--dim, #6b7280);
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .edit-header a:hover {
+    background: var(--light, #f3f4f6);
+    color: var(--navy, #1e2a4a);
+  }
+  .user-avatar-lg {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--navy, #1e2a4a);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .user-meta { line-height: 1.4; }
+  .user-meta-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--navy, #1e2a4a);
+  }
+  .user-meta-email {
+    font-size: 12px;
+    color: var(--dim, #6b7280);
+  }
+  .section-divider {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim, #6b7280);
+    margin: 24px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border, #e5e7eb);
+  }
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .role-option-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .role-option {
+    position: relative;
+  }
+  .role-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .role-option label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border, #e5e7eb);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy, #1e2a4a);
+  }
+  .role-option input[type="radio"]:checked + label {
+    border-color: var(--teal, #0d9488);
+    background: #f0fdfa;
+    color: var(--teal, #0d9488);
+  }
+  .role-option label:hover {
+    border-color: var(--teal, #0d9488);
+    background: #f9fffe;
+  }
+  .role-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-student  { background: #0d9488; }
+  .dot-officer  { background: #d97706; }
+  .dot-provider { background: #16a34a; }
+  .dot-admin    { background: #dc2626; }
+
+  .status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border, #e5e7eb);
+    border-radius: 8px;
+    margin-top: 4px;
+  }
+  .toggle-switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle-switch input:checked + .toggle-slider { background: #16a34a; }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+  .toggle-label { font-size: 13px; font-weight: 500; color: var(--navy, #1e2a4a); }
+  .toggle-sub   { font-size: 11px; color: var(--dim, #6b7280); margin-top: 1px; }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border, #e5e7eb);
+  }
+  .alert {
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .alert-error   { background: #fdeaea; color: #8b1a1a; border: 1px solid #f0c0c0; }
+  .alert-success { background: #e6f5ec; color: #1a7a4a; border: 1px solid #c0e8d0; }
+
+  .meta-row {
+    display: flex;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    font-size: 13px;
+  }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-key   { width: 130px; color: var(--dim, #6b7280); flex-shrink: 0; }
+  .meta-value { color: var(--navy, #1e2a4a); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">E</div>
+  <div>
+    <div class="topbar-title">Admin Dashboard</div>
+    <div class="topbar-sub">EFAMS — Integrated Financial Aid Management System</div>
+  </div>
+  <div class="topbar-right"><div class="topbar-user">AU</div></div>
+</div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-section">Admin</div>
+    <a href="{{ url_for('admin.manage_applications') }}" class="sidebar-item">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="1" y="3" width="14" height="10" rx="1"/>
+        <line x1="1" y1="7" x2="15" y2="7"/>
+      </svg>
+      Manage Applications
+    </a>
+    <a href="{{ url_for('admin.manage_users') }}" class="sidebar-item active">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="8" cy="5" r="3"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+      </svg>
+      Manage Users
+    </a>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-item logout"
+         onclick="window.location.href='{{ url_for('auth.logout') }}'">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>
+        <polyline points="11,11 14,8 11,5"/>
+        <line x1="14" y1="8" x2="6" y2="8"/>
+      </svg>
+      Logout
+    </div>
+  </nav>
+
+  <div class="main">
+
+    <!-- Back + user identity header -->
+    <div class="edit-header">
+      <a href="{{ url_for('admin.manage_users') }}">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+             stroke="currentColor" stroke-width="1.8">
+          <polyline points="10,3 5,8 10,13"/>
+        </svg>
+        Back to Users
+      </a>
+      <div class="user-avatar-lg">
+        {{ user.first_name[0] }}{{ user.last_name[0] }}
+      </div>
+      <div class="user-meta">
+        <div class="user-meta-name">{{ user.first_name }} {{ user.last_name }}</div>
+        <div class="user-meta-email">{{ user.email }} &nbsp;·&nbsp; User ID #{{ user.user_id }}</div>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {% if category == 'error' %}
+              <svg viewBox="0 0 16 16" width="15" height="15" fill="none"
+                   stroke="currentColor" stroke-width="1.8">
+                <circle cx="8" cy="8" r="6"/>
+                <line x1="8" y1="5" x2="8" y2="8"/>
+                <circle cx="8" cy="11" r="0.5" fill="currentColor"/>
+              </svg>
+            {% else %}
+              <svg viewBox="0 0 16 16" width="15" height="15" fill="none"
+                   stroke="currentColor" stroke-width="1.8">
+                <circle cx="8" cy="8" r="6"/>
+                <polyline points="5,8 7,10 11,6"/>
+              </svg>
+            {% endif %}
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+
+      <!-- ── Left: Edit Form ── -->
+      <div class="card">
+        <div class="card-header">Edit User Details</div>
+        <div class="card-body">
+          <form method="POST"
+                action="{{ url_for('admin.edit_user', user_id=user.user_id) }}">
+
+            <div class="section-divider">Personal Information</div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input class="form-control" type="text" name="first_name"
+                       value="{{ user.first_name }}" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input class="form-control" type="text" name="last_name"
+                       value="{{ user.last_name }}" required>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top:14px">
+              <label class="form-label">Email Address</label>
+              <input class="form-control" type="email" name="email"
+                     value="{{ user.email }}" required>
+            </div>
+
+            <div class="section-divider" style="margin-top:24px">Role</div>
+            <div class="role-option-group">
+              <div class="role-option">
+                <input type="radio" name="role" id="role-student" value="STUDENT"
+                       {{ 'checked' if user.role == 'STUDENT' }}>
+                <label for="role-student">
+                  <span class="role-dot dot-student"></span> Student
+                </label>
+              </div>
+              <div class="role-option">
+                <input type="radio" name="role" id="role-officer" value="OFFICER"
+                       {{ 'checked' if user.role == 'OFFICER' }}>
+                <label for="role-officer">
+                  <span class="role-dot dot-officer"></span> Verification Officer
+                </label>
+              </div>
+              <div class="role-option">
+                <input type="radio" name="role" id="role-provider" value="PROVIDER"
+                       {{ 'checked' if user.role == 'PROVIDER' }}>
+                <label for="role-provider">
+                  <span class="role-dot dot-provider"></span> Financial Aid Provider
+                </label>
+              </div>
+              <div class="role-option">
+                <input type="radio" name="role" id="role-admin" value="ADMIN"
+                       {{ 'checked' if user.role == 'ADMIN' }}>
+                <label for="role-admin">
+                  <span class="role-dot dot-admin"></span> Administrator
+                </label>
+              </div>
+            </div>
+
+            <div class="section-divider" style="margin-top:24px">Account Status</div>
+            <div class="status-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" name="is_active" value="1"
+                       {{ 'checked' if user.is_active }}>
+                <span class="toggle-slider"></span>
+              </label>
+              <div>
+                <div class="toggle-label" id="status-label">
+                  {{ 'Account Active' if user.is_active else 'Account Inactive' }}
+                </div>
+                <div class="toggle-sub">
+                  {{ 'User can log in and access the system' if user.is_active
+                     else 'User is blocked from logging in' }}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <a href="{{ url_for('admin.manage_users') }}"
+                 class="btn btn-sm"
+                 style="background:var(--light,#f3f4f6);color:var(--navy,#1e2a4a);
+                        border:1px solid var(--border,#e5e7eb)">
+                Cancel
+              </a>
+              <button type="submit" class="btn btn-teal btn-sm">
+                Save Changes
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Right: Read-only metadata ── -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="card-header">Account Info</div>
+          <div class="card-body" style="padding-top:4px;padding-bottom:4px">
+            <div class="meta-row">
+              <span class="meta-key">User ID</span>
+              <span class="meta-value">#{{ user.user_id }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Registered</span>
+              <span class="meta-value">
+                {{ user.created_at.strftime('%d %b %Y') }}
+              </span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Current Role</span>
+              <span class="meta-value">
+                <span class="role-badge {{ user.role.lower() }}">{{ user.role }}</span>
+              </span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Status</span>
+              <span class="meta-value">
+                <span class="pill {{ 'active' if user.is_active else 'inactive' }}">
+                  {{ 'Active' if user.is_active else 'Inactive' }}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger zone -->
+        <div class="card" style="border:1px solid #fca5a5">
+          <div class="card-header" style="color:#dc2626;border-bottom-color:#fca5a5">
+            Danger Zone
+          </div>
+          <div class="card-body">
+            <p style="font-size:12px;color:var(--dim,#6b7280);margin:0 0 14px">
+              Deleting this user is permanent and cannot be undone.
+              All associated data will be removed.
+            </p>
+            {% if user.user_id != session['user_id'] %}
+            <form method="POST"
+                  action="{{ url_for('admin.remove_user', user_id=user.user_id) }}"
+                  onsubmit="return confirm(
+                    'Permanently delete {{ user.first_name }} {{ user.last_name }}?\nThis action cannot be undone.')">
+              <button type="submit" class="btn btn-red btn-sm" style="width:100%">
+                Delete This User
+              </button>
+            </form>
+            {% else %}
+            <button class="btn btn-sm" disabled
+                    style="width:100%;opacity:0.4;cursor:not-allowed">
+              Cannot Delete Yourself
+            </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Update the status label text live when toggle is flipped
+  const toggle = document.querySelector('input[name="is_active"]');
+  const label  = document.getElementById('status-label');
+  toggle.addEventListener('change', () => {
+    label.textContent = toggle.checked ? 'Account Active' : 'Account Inactive';
+  });
+</script>
+
+</body>
+</html>

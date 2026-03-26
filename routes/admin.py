@@ -6,7 +6,7 @@ from models import (
     get_all_users, create_user, delete_user,
     update_user_status, count_users_by_role,
     get_all_applications, delete_application,
-    count_applications_by_status
+    count_applications_by_status, get_application_by_id, get_documents_by_application
 )
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -65,6 +65,32 @@ def remove_user(user_id):
     flash('User deleted.', 'success')
     return redirect(url_for('admin.manage_users'))
 
+@admin_bp.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_user(user_id):
+    from models import get_user_by_id, update_user  # add update_user to models
+    user = get_user_by_id(user_id)
+
+    if not user:
+        flash('User not found.', 'error')
+        return redirect(url_for('admin.manage_users'))
+
+    if request.method == 'POST':
+        first_name = request.form.get('first_name', '').strip()
+        last_name  = request.form.get('last_name', '').strip()
+        email      = request.form.get('email', '').strip()
+        role       = request.form.get('role', '').strip()
+
+        if not all([first_name, last_name, email, role]):
+            flash('All fields are required.', 'error')
+            return redirect(url_for('admin.edit_user', user_id=user_id))
+
+        update_user(user_id, first_name, last_name, email, role)
+        flash(f'User {first_name} {last_name} updated.', 'success')
+        return redirect(url_for('admin.manage_users'))
+
+    return render_template('edit_user.html', user=user)
+
 
 @admin_bp.route('/users/<int:user_id>/toggle', methods=['POST'])
 @admin_required
@@ -84,7 +110,7 @@ def manage_applications():
     if status_f:
         apps = [a for a in apps if a['status'] == status_f]
     counts    = count_applications_by_status()
-    return render_template('admin/applications.html',
+    return render_template('manage_applications.html',
                            applications=apps,
                            counts=counts,
                            status_filter=status_f)
@@ -96,3 +122,13 @@ def remove_application(application_id):
     delete_application(application_id)
     flash('Application deleted.', 'success')
     return redirect(url_for('admin.manage_applications'))
+
+@admin_bp.route('/applications/<int:application_id>')
+@admin_required
+def view_application(application_id):
+    app  = get_application_by_id(application_id)
+    if not app:
+        flash('Application not found.', 'error')
+        return redirect(url_for('admin.manage_applications'))
+    docs = get_documents_by_application(application_id)
+    return render_template('view_application.html', app=app, docs=docs)

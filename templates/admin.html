@@ -16,7 +16,7 @@
   <div class="shell">
     <nav class="sidebar">
       <div class="sidebar-section">Admin</div>
-      <a href="{{ url_for('manage_applications') }}" class="sidebar-item">
+      <a href="{{ url_for('admin.manage_applications') }}" class="sidebar-item">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="14" height="10" rx="1"/><line x1="1" y1="7" x2="15" y2="7"/></svg>
         Manage Applications
       </a>
@@ -37,11 +37,26 @@
       </div>
 
       <div class="stats-row stats-5">
-        <div class="stat-card navy"><div class="stat-val navy">47</div><div class="stat-label">Total Users</div></div>
-        <div class="stat-card teal"><div class="stat-val teal">32</div><div class="stat-label">Students</div></div>
-        <div class="stat-card gold"><div class="stat-val gold">8</div><div class="stat-label">Officers</div></div>
-        <div class="stat-card green"><div class="stat-val green">5</div><div class="stat-label">Providers</div></div>
-        <div class="stat-card red"><div class="stat-val red">2</div><div class="stat-label">Admins</div></div>
+        <div class="stat-card navy">
+  <div class="stat-val navy">{{ total }}</div>
+  <div class="stat-label">Total Users</div>
+</div>
+<div class="stat-card teal">
+  <div class="stat-val teal">{{ role_stats.get('STUDENT', 0) }}</div>
+  <div class="stat-label">Students</div>
+</div>
+<div class="stat-card gold">
+  <div class="stat-val gold">{{ role_stats.get('OFFICER', 0) }}</div>
+  <div class="stat-label">Officers</div>
+</div>
+<div class="stat-card green">
+  <div class="stat-val green">{{ role_stats.get('PROVIDER', 0) }}</div>
+  <div class="stat-label">Providers</div>
+</div>
+<div class="stat-card red">
+  <div class="stat-val red">{{ role_stats.get('ADMIN', 0) }}</div>
+  <div class="stat-label">Admins</div>
+</div>
       </div>
 
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
@@ -49,12 +64,19 @@
           <span class="search-icon">🔍</span>
           <input class="search-input" placeholder="Search by name, email or role...">
         </div>
-        <button class="btn btn-green btn-lg" onclick="document.getElementById('add-user-form').scrollIntoView({behavior:'smooth'})">+ Add New User</button>
       </div>
-
       <div class="card" id="add-user-form" style="margin-bottom:20px;">
         <div class="card-header">Add New User</div>
         <div class="card-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px;{% if category == 'error' %}background:#fdeaea;color:#8b1a1a;border:1px solid #f0c0c0{% else %}background:#e6f5ec;color:#1a7a4a;border:1px solid #c0e8d0{% endif %}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
           <form method="POST" action="{{ url_for('admin.add_user') }}">
             <div class="form-grid form-grid-4" style="gap:12px;">
               <div class="form-group"><label class="form-label">First Name</label><input class="form-control" type="text" name="first_name" required></div>
@@ -81,17 +103,22 @@
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>#</th><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th>
+              <th>No</th><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th>
             </tr></thead>
             <tbody>
-              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="color:var(--dim);font-size:12px">agatha@example.com</td><td><span class="role-badge student">Student</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Jan 2025</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="color:var(--dim);font-size:12px">mary@example.com</td><td><span class="role-badge student">Student</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Jan 2025</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>3</td><td style="font-weight:500">James Kariuki</td><td style="color:var(--dim);font-size:12px">james@embassy.go.ke</td><td><span class="role-badge officer">Embassy Officer</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Dec 2024</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>4</td><td style="font-weight:500">Sarah Maina</td><td style="color:var(--dim);font-size:12px">sarah@helb.co.ke</td><td><span class="role-badge provider">Aid Provider</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Nov 2024</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>5</td><td style="font-weight:500">Tom Njoroge</td><td style="color:var(--dim);font-size:12px">tom@embassy.go.ke</td><td><span class="role-badge officer">Embassy Officer</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Nov 2024</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>6</td><td style="font-weight:500">Admin User</td><td style="color:var(--dim);font-size:12px">admin@efams.io</td><td><span class="role-badge admin">Admin</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Oct 2024</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>7</td><td style="font-weight:500">Grace Auma</td><td style="color:var(--dim);font-size:12px">grace@example.com</td><td><span class="role-badge student">Student</span></td><td><span class="pill inactive">Inactive</span></td><td style="color:var(--dim)">Feb 2025</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
-              <tr><td>8</td><td style="font-weight:500">Brian Odhiambo</td><td style="color:var(--dim);font-size:12px">brian@helb.co.ke</td><td><span class="role-badge provider">Aid Provider</span></td><td><span class="pill active">Active</span></td><td style="color:var(--dim)">Feb 2025</td><td><button class="btn btn-teal btn-sm" style="margin-right:6px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+              {% for user in users %}
+              <tr><td>{{ loop.index }}</td><td style="font-weight:500">{{ user.first_name }} {{ user.last_name }}</td><td style="color:var(--dim);font-size:12px">{{ user.email }}</td><td><span class="role-badge {{ user.role.lower() }}">{{ user.role }}</span></td><td><span class="pill {{ 'active' if user.is_active else 'inactive' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span></td><td style="color:var(--dim)">{{ user.created_at.strftime('%b %Y') }}</td>
+                <td><a href="{{ url_for('admin.edit_user', user_id=user.user_id) }}" 
+                class="btn btn-teal btn-sm" style="margin-right:6px">Edit</a>
+
+              <!-- Delete button wrapped in a form -->
+              <form method="POST" 
+                    action="{{ url_for('admin.remove_user', user_id=user.user_id) }}"
+                    style="display:inline"
+                    onsubmit="return confirm('Delete {{ user.first_name }} {{ user.last_name }}? This cannot be undone.')">
+                <button type="submit" class="btn btn-red btn-sm">Delete</button>
+              </form></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
