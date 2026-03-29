@@ -169,20 +169,40 @@ def get_pending_applications():
 
 
 def get_verified_applications():
-    """For provider — all VERIFIED/FORWARDED apps."""
+    """For provider — only applications with status VERIFIED."""
     cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*, u.first_name, u.last_name,
-               fs.nationality, fs.institution
+               fs.nationality, fs.institution, fs.program_of_study
         FROM applications a
         JOIN foreign_students fs ON a.student_id = fs.student_id
         JOIN users u             ON fs.student_id = u.user_id
-        WHERE a.status IN ('VERIFIED', 'FORWARDED', 'ASSESSING')
+        WHERE a.status = 'VERIFIED'
         ORDER BY a.submitted_at ASC
     """)
     apps = cur.fetchall()
     cur.close()
     return apps
+
+def save_assessment(application_id, provider_id, decision_outcome,
+                    approved_amount, justification):
+    """Save provider assessment — simplified, no scoring fields."""
+    final_status = 'APPROVED' if 'APPROVED' in decision_outcome else 'REJECTED'
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        UPDATE applications SET
+            assessed_by_id    = %s,
+            decision_outcome  = %s,
+            approved_amount   = %s,
+            assessment_comments = %s,
+            assessed_at       = NOW(),
+            status            = %s,
+            last_updated = NOW()
+        WHERE application_id = %s
+    """, (provider_id, decision_outcome, approved_amount,
+          justification, final_status, application_id))
+    mysql.connection.commit()
+    cur.close()
 
 
 def get_all_applications():
@@ -267,32 +287,6 @@ def update_application_status(application_id, new_status,
     cur.close()
 
 
-def save_assessment(application_id, provider_id, financial_score,
-                    academic_score, need_score, decision_outcome,
-                    approved_amount, justification):
-    cur = mysql.connection.cursor(DictCursor)
-    cur.execute("""
-        UPDATE applications SET
-            assessed_by_id    = %s,
-            financial_score   = %s,
-            academic_score    = %s,
-            need_score        = %s,
-            decision_outcome  = %s,
-            approved_amount   = %s,
-            justification     = %s,
-            assessed_at       = NOW(),
-            decision_date     = NOW(),
-            status            = %s,
-            last_updated      = NOW()
-        WHERE application_id = %s
-    """, (
-        provider_id, financial_score, academic_score, need_score,
-        decision_outcome, approved_amount, justification,
-        'APPROVED' if 'APPROVED' in decision_outcome else 'REJECTED',
-        application_id
-    ))
-    mysql.connection.commit()
-    cur.close()
 
 
 def delete_application(application_id):

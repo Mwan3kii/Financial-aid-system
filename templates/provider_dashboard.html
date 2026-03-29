@@ -33,14 +33,32 @@
         <div class="page-title-bar"></div>
         <div class="page-subtitle">Applications verified by the embassy — ready for financial assessment</div>
       </div>
-
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div style="padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px;
+              {% if category == 'error' %}background:#fdeaea;color:#8b1a1a;border:1px solid #f0c0c0
+              {% else %}background:#e6f5ec;color:#1a7a4a;border:1px solid #c0e8d0{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
       <div class="stats-row stats-4">
-        <div class="stat-card teal"><div class="stat-val teal">22</div><div class="stat-label">Verified Apps</div></div>
-        <div class="stat-card green"><div class="stat-val green">15</div><div class="stat-label">Approved</div></div>
-        <div class="stat-card red"><div class="stat-val red">4</div><div class="stat-label">Rejected</div></div>
-        <div class="stat-card gold"><div class="stat-val gold" style="font-size:20px">KES 3.2M</div><div class="stat-label">Funds Disbursed</div></div>
+        <div class="stat-card teal">
+          <div class="stat-val teal">{{ stats.verified }}</div>
+          <div class="stat-label">Awaiting Assessment</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-val green">{{ stats.approved }}</div>
+          <div class="stat-label">Approved</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-val red">{{ stats.rejected }}</div>
+          <div class="stat-label">Rejected</div>
+        </div>
       </div>
-
+      
       <div class="card">
         <div class="card-header">Verified Applications — Ready for Assessment</div>
         <div class="table-wrap">
@@ -49,10 +67,33 @@
               <th>#</th><th>Student Name</th><th>Application ID</th><th>Loan (KES)</th><th>Institution</th><th>Verified Date</th><th>Status</th><th>Action</th>
             </tr></thead>
             <tbody>
-              <tr><td>1</td><td style="font-weight:500">Agatha Wanja</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-221051</td><td>250,000</td><td>Univ. of Nairobi</td><td>20 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
-              <tr><td>2</td><td style="font-weight:500">Mary Wambui</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-224070</td><td>180,000</td><td>Strathmore Univ.</td><td>22 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
-              <tr><td>3</td><td style="font-weight:500">John Kamau</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225001</td><td>320,000</td><td>KU</td><td>23 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
-              <tr><td>7</td><td style="font-weight:500">Brian Mwangi</td><td style="font-family:'DM Mono',monospace;font-size:12px">APP-225078</td><td>190,000</td><td>Strathmore</td><td>26 Feb 2025</td><td><span class="pill verified-status">Verified</span></td><td><button class="btn btn-gold btn-sm" onclick="window.location.href='assessment.html'">Assess</button></td></tr>
+              {% if applications %}
+                {% for app in applications %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td style="font-weight:500">{{ app.first_name }} {{ app.last_name }}</td>
+                  <td style="font-family:'DM Mono',monospace;font-size:12px">
+                    APP-{{ '%06d' % app.application_id }}
+                  </td>
+                  <td>{{ '{:,.0f}'.format(app.requested_amount) }}</td>
+                  <td>{{ app.institution or '—' }}</td>
+                  <td style="color:var(--dim)">
+                    {{ app.submitted_at.strftime('%d %b %Y') if app.submitted_at else '—' }}
+                  </td>
+                  <td><span class="pill verified-status">Verified</span></td>
+                  <td>
+                    <a href="{{ url_for('provider.assess', application_id=app.application_id) }}"
+                       class="btn btn-gold btn-sm">Assess</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="8" style="text-align:center;padding:32px;color:var(--dim)">
+                    No verified applications awaiting assessment.
+                  </td>
+                </tr>
+              {% endif %}
             </tbody>
           </table>
         </div>

@@ -7,6 +7,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<style>
+  /* Decision radio cards */
+  .decision-options { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .decision-option  { display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+                      border: 1.5px solid var(--border, #e2e6ef); border-radius: 8px;
+                      cursor: pointer; transition: border-color .15s, background .15s; }
+  .decision-option:hover        { background: var(--surface, #f8f9fc); }
+  .decision-option input[type=radio] { accent-color: var(--navy); width: 16px; height: 16px; flex-shrink: 0; }
+  .decision-option.selected-approve  { border-color: var(--green,  #1a7a4a); background: #e6f5ec; }
+  .decision-option.selected-partial  { border-color: var(--amber,  #b07d1a); background: #fdf6e3; }
+  .decision-option.selected-reject   { border-color: var(--red,    #8b1a1a); background: #fdeaea; }
+  .decision-option.selected-defer    { border-color: var(--teal,   #0e6e7e); background: #e6f5f7; }
+  .decision-label  { font-weight: 500; font-size: 14px; }
+ 
+  /* Approved amount row — hidden unless partial */
+  #amountRow { display: none; margin-top: 14px; }
+  #amountRow.visible { display: block; }
+</style>
 </head>
 <body>
     <div class="topbar">
@@ -17,9 +35,9 @@
   <div class="shell">
     <nav class="sidebar">
       <div class="sidebar-section">Provider</div>
-      <a href="{{ url_for('manage_applications') }}" class="sidebar-item active">
+      <a href="{{ url_for('provider.dashboard') }}" class="sidebar-item active">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="14" height="10" rx="1"/><line x1="1" y1="7" x2="15" y2="7"/></svg>
-        View Applications
+        View Verified Applications
       </a>
       <div class="sidebar-spacer"></div>
       <div class="sidebar-item logout" onclick="window.location.href='{{ url_for('auth.logout') }}'">
@@ -32,17 +50,65 @@
         <div class="page-title">Assess Application</div>
         <div class="page-title-bar"></div>
       </div>
-
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div style="padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px;
+              {% if category == 'error' %}background:#fdeaea;color:#8b1a1a;border:1px solid #f0c0c0
+              {% else %}background:#e6f5ec;color:#1a7a4a;border:1px solid #c0e8d0{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
       <div class="card" style="margin-bottom:18px">
         <div class="card-header">Application Summary</div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-            <div><div class="form-label">Application ID</div><div style="font-weight:600;color:var(--navy)">APP-123555</div></div>
-            <div><div class="form-label">Student</div><div style="font-weight:600;color:var(--navy)">Agatha Wanja</div></div>
-            <div><div class="form-label">Embassy Status</div><span class="pill verified">Verified ✓</span></div>
-            <div><div class="form-label">Institution</div><div style="font-weight:600;color:var(--navy)">University of Nairobi</div></div>
-            <div><div class="form-label">Loan Requested</div><div style="font-weight:600;color:var(--navy)">KES 250,000</div></div>
-            <div><div class="form-label">Submitted</div><div style="font-weight:600;color:var(--navy)">14 Feb 2025</div></div>
+            <div>
+              <div class="form-label">Application ID</div>
+              <div style="font-weight:600;color:var(--navy);font-family:'DM Mono',monospace">
+                APP-{{ '%06d' % application.application_id }}
+              </div>
+            </div>
+            <div>
+              <div class="form-label">Student</div>
+              <div style="font-weight:600;color:var(--navy)">
+                {{ application.first_name }} {{ application.last_name }}
+              </div>
+            </div>
+            <div>
+              <div class="form-label">Embassy Status</div>
+              <span class="pill verified-status">Verified ✓</span>
+            </div>
+            <div>
+              <div class="form-label">Institution</div>
+              <div style="font-weight:600;color:var(--navy)">{{ application.institution or '—' }}</div>
+            </div>
+            <div>
+              <div class="form-label">Program of Study</div>
+              <div style="font-weight:600;color:var(--navy)">{{ application.program_of_study or '—' }}</div>
+            </div>
+            <div>
+              <div class="form-label">Amount Requested</div>
+              <div style="font-weight:600;color:var(--navy)">
+                KES {{ '{:,.0f}'.format(application.requested_amount) }}
+              </div>
+            </div>
+            <div>
+              <div class="form-label">Nationality</div>
+              <div style="font-weight:600;color:var(--navy)">{{ application.nationality or '—' }}</div>
+            </div>
+            <div>
+              <div class="form-label">Purpose</div>
+              <div style="font-weight:600;color:var(--navy)">{{ application.purpose or '—' }}</div>
+            </div>
+            <div>
+              <div class="form-label">Submitted</div>
+              <div style="font-weight:600;color:var(--navy)">
+                {{ application.submitted_at.strftime('%d %b %Y') if application.submitted_at else '—' }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -52,11 +118,25 @@
         <div class="card">
           <div class="card-header teal">Submitted Documents</div>
           <div class="card-body" style="padding:14px">
-            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Application Form</div><div class="file-meta">application_form.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
-            <div class="file-row"><div class="file-icon img">IMG</div><div><div class="file-name">Passport Photo</div><div class="file-meta">passport.png</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
-            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Admission Letter</div><div class="file-meta">admission_letter.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
-            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Academic Transcript</div><div class="file-meta">transcript.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
-            <div class="file-row"><div class="file-icon pdf">PDF</div><div><div class="file-name">Bank Statement</div><div class="file-meta">bank_statement.pdf</div></div><div class="file-actions"><button class="btn btn-teal btn-sm">View</button></div></div>
+            {% if documents %}
+              {% for doc in documents %}
+              <div class="file-row">
+                <div class="file-icon {{ 'pdf' if doc.file_name.endswith('.pdf') else 'img' }}">
+                  {{ 'PDF' if doc.file_name.endswith('.pdf') else 'IMG' }}
+                </div>
+                <div>
+                  <div class="file-name">{{ doc.document_type | replace('_', ' ') | title }}</div>
+                  <div class="file-meta">{{ doc.file_name }}</div>
+                </div>
+                <div class="file-actions">
+                  <a href="{{ url_for('static', filename=doc.storage_path.replace('static/', '', 1).replace('\\', '/')) }}"
+                     target="_blank" class="btn btn-teal btn-sm">View</a>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <p style="color:var(--dim);font-size:13px;margin:0">No documents uploaded.</p>
+            {% endif %}
           </div>
         </div>
 
@@ -64,29 +144,127 @@
         <div class="card">
           <div class="card-header gold">Assessment Decision</div>
           <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">Decision</label>
-              <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
-                <label class="radio-label" style="color:var(--green)"><input type="radio" name="adec" checked> Approve (Full Amount)</label>
-                <label class="radio-label" style="color:var(--amber)"><input type="radio" name="adec"> Approve (Partial Amount)</label>
-                <label class="radio-label" style="color:var(--red)"><input type="radio" name="adec"> Reject</label>
-                <label class="radio-label" style="color:var(--blue)"><input type="radio" name="adec"> Defer for Review</label>
+            <form method="POST"
+                  action="{{ url_for('provider.assess', application_id=application.application_id) }}">
+ 
+              <!-- Decision radio group -->
+              <div class="form-group">
+                <label class="form-label">Decision <span style="color:var(--red)">*</span></label>
+                <div class="decision-options" id="decisionOptions">
+ 
+                  <label class="decision-option" id="opt-full">
+                    <input type="radio" name="decision" value="APPROVED_FULL" required>
+                    <span class="decision-label" style="color:var(--green,#1a7a4a)">
+                      ✓ Approve — Full Amount
+                      <span style="font-weight:400;font-size:12px;color:var(--dim)">
+                        (KES {{ '{:,.0f}'.format(application.requested_amount) }})
+                      </span>
+                    </span>
+                  </label>
+ 
+                  <label class="decision-option" id="opt-partial">
+                    <input type="radio" name="decision" value="APPROVED_PARTIAL">
+                    <span class="decision-label" style="color:var(--amber,#b07d1a)">
+                      ~ Approve — Partial Amount
+                    </span>
+                  </label>
+ 
+                  <label class="decision-option" id="opt-reject">
+                    <input type="radio" name="decision" value="REJECTED">
+                    <span class="decision-label" style="color:var(--red,#8b1a1a)">
+                      ✕ Reject Application
+                    </span>
+                  </label>
+ 
+                  <label class="decision-option" id="opt-defer">
+                    <input type="radio" name="decision" value="DEFERRED">
+                    <span class="decision-label" style="color:var(--teal,#0e6e7e)">
+                      ⟳ Defer for Further Review
+                    </span>
+                  </label>
+ 
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Approved Amount (KES)</label>
-              <input class="form-control" value="250,000">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Assessment Comments</label>
-              <textarea class="form-control" rows="5" style="resize:vertical">Student meets all eligibility criteria. Academic performance is strong (GPA 3.7). Financial need is substantiated by bank statements. Full loan amount approved.</textarea>
-            </div>
-            <button class="btn btn-navy btn-lg" style="width:100%;justify-content:center;margin-top:6px">Submit Assessment Decision →</button>
+ 
+              <!-- Approved amount — shown only for partial -->
+              <div class="form-group" id="amountRow">
+                <label class="form-label">Approved Amount (KES)</label>
+                <input class="form-control" type="number" name="approved_amount"
+                       id="approvedAmount" placeholder="e.g. 150000" min="0">
+              </div>
+ 
+              <!-- Hidden approved_amount for full / non-partial decisions -->
+              <input type="hidden" name="approved_amount" id="approvedAmountHidden"
+                     value="{{ application.requested_amount }}">
+ 
+              <!-- Comments -->
+              <div class="form-group" style="margin-top:14px">
+                <label class="form-label">Assessment Comments</label>
+                <textarea class="form-control" name="justification" rows="5"
+                          style="resize:vertical"
+                          placeholder="Briefly explain your decision…"></textarea>
+              </div>
+ 
+              <button type="submit" class="btn btn-navy btn-lg"
+                      style="width:100%;justify-content:center;margin-top:10px">
+                Submit Assessment Decision →
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+<script>
+(function () {
+  const radios  = document.querySelectorAll('input[name="decision"]');
+  const amountRow     = document.getElementById('amountRow');
+  const approvedInput = document.getElementById('approvedAmount');
+  const hiddenInput   = document.getElementById('approvedAmountHidden');
+ 
+  const optMap = {
+    'APPROVED_FULL':    { el: 'opt-full',    cls: 'selected-approve' },
+    'APPROVED_PARTIAL': { el: 'opt-partial', cls: 'selected-partial' },
+    'REJECTED':         { el: 'opt-reject',  cls: 'selected-reject'  },
+    'DEFERRED':         { el: 'opt-defer',   cls: 'selected-defer'   },
+  };
+ 
+  const fullAmount = {{ application.requested_amount }};
+ 
+  function onDecisionChange(val) {
+    // Clear highlight on all options
+    Object.values(optMap).forEach(o => {
+      document.getElementById(o.el).classList.remove(
+        'selected-approve', 'selected-partial', 'selected-reject', 'selected-defer'
+      );
+    });
+    // Highlight selected
+    if (optMap[val]) {
+      document.getElementById(optMap[val].el).classList.add(optMap[val].cls);
+    }
+    // Show/hide partial amount input
+    const isPartial = val === 'APPROVED_PARTIAL';
+    amountRow.classList.toggle('visible', isPartial);
+    approvedInput.required = isPartial;
+ 
+    // Keep hidden amount in sync
+    if (val === 'APPROVED_FULL') {
+      hiddenInput.value = fullAmount;
+    } else if (!isPartial) {
+      hiddenInput.value = 0;
+    }
+  }
+ 
+  radios.forEach(r => {
+    r.addEventListener('change', () => onDecisionChange(r.value));
+  });
+ 
+  // Sync partial amount → hidden field
+  approvedInput.addEventListener('input', () => {
+    hiddenInput.value = approvedInput.value || 0;
+  });
+})();
+</script>
 </body>
 </html>

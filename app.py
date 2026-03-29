@@ -154,9 +154,9 @@ def create_app():
     # def manage_applications():
     #     return render_template('manage_applications.html')
     
-    @app.route('/admin/assessment')
-    def assessment():
-        return render_template('assessment.html')
+    # @app.route('/admin/assessment')
+    # def assessment():
+    #     return render_template('assessment.html')
 
     # Register blueprints
     app.register_blueprint(auth_bp)

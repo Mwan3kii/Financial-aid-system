@@ -43,37 +43,38 @@ def assess(application_id):
     provider_id = session['user_id']
     app  = get_application_by_id(application_id)
     docs = get_documents_by_application(application_id)
-
+ 
     if not app:
         flash('Application not found.', 'error')
         return redirect(url_for('provider.dashboard'))
-
+ 
     if request.method == 'POST':
-        financial_score  = float(request.form.get('financial_score', 0))
-        academic_score   = float(request.form.get('academic_score', 0))
-        need_score       = float(request.form.get('need_score', 0))
-        decision_outcome = request.form.get('decision')  # APPROVED_FULL etc.
+        decision_outcome = request.form.get('decision', '').strip()
         approved_amount  = float(
-            request.form.get('approved_amount', '0').replace(',', '')
+            request.form.get('approved_amount', '0').replace(',', '') or 0
         )
-        justification    = request.form.get('justification', '')
-
+        justification = request.form.get('justification', '').strip()
+ 
+        if not decision_outcome:
+            flash('Please select a decision.', 'error')
+            return redirect(url_for('provider.assess',
+                                    application_id=application_id))
+ 
         save_assessment(
             application_id, provider_id,
-            financial_score, academic_score, need_score,
             decision_outcome, approved_amount, justification
         )
-
-        # Notify the student of the decision
+ 
+        # Notify the student
         is_approved = 'APPROVED' in decision_outcome
         subject = ('Application Approved — Funds Will Be Disbursed'
-                   if is_approved
-                   else 'Application Decision Issued')
+                   if is_approved else 'Application Decision Issued')
         message = (
-            f"Your application has been {'approved' if is_approved else 'reviewed'}. "
-            f"{justification}"
+            f"Your application ({app['application_id']}) has been "
+            f"{'approved' if is_approved else 'reviewed by the provider'}. "
+            + (justification if justification else '')
         )
-
+ 
         create_notification(
             application_id,
             sender_id    = provider_id,
@@ -83,10 +84,10 @@ def assess(application_id):
             subject      = subject,
             message      = message
         )
-
+ 
         flash('Assessment submitted successfully.', 'success')
         return redirect(url_for('provider.dashboard'))
-
-    return render_template('provider/assess.html',
+ 
+    return render_template('assessment.html',
                            application=app,
                            documents=docs)
