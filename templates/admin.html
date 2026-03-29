@@ -6,6 +6,28 @@
 <title>EFAMS</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  /* ── Extra-fields panel ── */
+  .extra-fields {
+    display: none;
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--surface, #f8f9fc);
+    border: 1px solid var(--border, #e2e6ef);
+    border-radius: 8px;
+    animation: fadeIn .18s ease;
+  }
+  .extra-fields.visible { display: block; }
+  .extra-fields .panel-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--dim, #8a92a6);
+    margin-bottom: 12px;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+</style>
 </head>
 <body>
     <div class="topbar">
@@ -86,12 +108,53 @@
             </div>
             <div class="form-group" style="margin-top:12px">
               <label class="form-label">Role</label>
-              <select class="form-control" name="role" required>
+              <select class="form-control" name="role" id="roleSelect" required>
                 <option value="STUDENT">Student</option>
                 <option value="OFFICER">Verification Officer</option>
                 <option value="PROVIDER">Financial Aid Provider</option>
                 <option value="ADMIN">Admin</option>
               </select>
+            </div>
+            <!-- ── Officer extra fields ── -->
+            <div class="extra-fields" id="officerFields">
+              <div class="panel-label">Verification Officer Details</div>
+              <div class="form-grid form-grid-3" style="gap:12px;">
+                <div class="form-group">
+                  <label class="form-label">Badge Number</label>
+                  <input class="form-control" type="text" name="badge_number" id="badgeNumber" placeholder="e.g. VO-00123">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Embassy Name</label>
+                  <input class="form-control" type="text" name="embassy_name" id="embassyName" placeholder="e.g. Embassy of Kenya in Paris">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Department</label>
+                  <input class="form-control" type="text" name="department" id="department" placeholder="e.g. Visa & Consular Services">
+                </div>
+              </div>
+            </div>
+ 
+            <!-- ── Provider extra fields ── -->
+            <div class="extra-fields" id="providerFields">
+              <div class="panel-label">Financial Aid Provider Details</div>
+              <div class="form-grid form-grid-2" style="gap:12px;">
+                <div class="form-group">
+                  <label class="form-label">Organization Name</label>
+                  <input class="form-control" type="text" name="organization_name" id="orgName" placeholder="e.g. Higher Education Loans Board">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Organization Type</label>
+                  <select class="form-control" name="organization_type" id="orgType">
+                    <option value="">— Select type —</option>
+                    <option value="GOVERNMENT">Government</option>
+                    <option value="NGO">NGO / Non-profit</option>
+                    <option value="PRIVATE">Private Institution</option>
+                    <option value="INTERNATIONAL">International Body</option>
+                    <option value="UNIVERSITY">University / Academic</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <button type="submit" class="btn btn-green btn-lg" style="margin-top:12px;">Create User</button>
           </form>
@@ -126,5 +189,44 @@
     </div>
   </div>
 </div>
+<script>
+/* ── Role-based extra fields ── */
+const roleSelect     = document.getElementById('roleSelect');
+const officerFields  = document.getElementById('officerFields');
+const providerFields = document.getElementById('providerFields');
+ 
+// Fields that need to be required only when visible
+const officerInputs  = officerFields.querySelectorAll('input');
+const providerInputs = providerFields.querySelectorAll('input, select');
+ 
+function toggleExtraFields() {
+  const role = roleSelect.value;
+ 
+  const showOfficer  = role === 'OFFICER';
+  const showProvider = role === 'PROVIDER';
+ 
+  officerFields.classList.toggle('visible', showOfficer);
+  providerFields.classList.toggle('visible', showProvider);
+ 
+  // Toggle required dynamically so the browser validates only visible fields
+  officerInputs.forEach(el  => el.required = showOfficer);
+  providerInputs.forEach(el => el.required = showProvider);
+}
+ 
+roleSelect.addEventListener('change', toggleExtraFields);
+// Run once on load in case the browser restores a selected value
+toggleExtraFields();
+ 
+/* ── Live search ── */
+document.getElementById('userSearch').addEventListener('input', function () {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+    const match = row.dataset.name.includes(q)
+                || row.dataset.email.includes(q)
+                || row.dataset.role.includes(q);
+    row.style.display = match ? '' : 'none';
+  });
+});
+</script>
 </body>
 </html>

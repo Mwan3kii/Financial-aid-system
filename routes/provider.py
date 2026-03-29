@@ -31,7 +31,7 @@ def dashboard():
         'approved':  counts.get('APPROVED', 0),
         'rejected':  counts.get('REJECTED', 0),
     }
-    return render_template('provider/dashboard.html',
+    return render_template('provider_dashboard.html',
                            applications=apps,
                            stats=stats)
 

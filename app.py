@@ -141,14 +141,14 @@ def create_app():
     #     return render_template('verification.html')
     
     # Provider routes
-    @app.route('/provider/dashboard')
-    def provider_dashboard():
-        return render_template('provider_dashboard.html')
+    # @app.route('/provider/dashboard')
+    # def provider_dashboard():
+    #     return render_template('provider_dashboard.html')
     
     # Admin routes
-    @app.route('/admin/dashboard')
-    def admin_dashboard():
-        return render_template('admin.html')
+    # @app.route('/admin/dashboard')
+    # def admin_dashboard():
+    #     return render_template('admin.html')
     
     # @app.route('/admin/manage')
     # def manage_applications():

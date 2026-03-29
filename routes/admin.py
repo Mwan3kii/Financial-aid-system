@@ -6,7 +6,7 @@ from models import (
     get_all_users, create_user, delete_user,
     update_user_status, count_users_by_role,
     get_all_applications, delete_application,
-    count_applications_by_status, get_application_by_id, get_documents_by_application
+    count_applications_by_status, get_application_by_id, get_documents_by_application, create_officer, create_provider
 )
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -43,14 +43,40 @@ def add_user():
     last_name  = request.form.get('last_name', '').strip()
     email      = request.form.get('email', '').strip()
     password   = request.form.get('password', '')
-    role       = request.form.get('role', 'OFFICER')
-
-    if not all([first_name, last_name, email, password]):
+    role       = request.form.get('role', '').strip().upper()
+ 
+    if not all([first_name, last_name, email, password, role]):
         flash('All fields are required.', 'error')
         return redirect(url_for('admin.manage_users'))
-
+ 
     pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-    create_user(first_name, last_name, email, pw_hash, role)
+    user_id = create_user(first_name, last_name, email, pw_hash, role)
+ 
+    # ── Role-specific profile rows ────────────────────────────────
+    if role == 'OFFICER':
+        badge_number = request.form.get('badge_number', '').strip()
+        embassy_name = request.form.get('embassy_name', '').strip()
+        department   = request.form.get('department', '').strip()
+ 
+        if not all([badge_number, embassy_name, department]):
+            flash('Officer details (badge number, embassy name, department) are required.', 'error')
+            # Roll back the user row to keep data consistent
+            delete_user(user_id)
+            return redirect(url_for('admin.manage_users'))
+ 
+        create_officer(user_id, badge_number, embassy_name, department)
+ 
+    elif role == 'PROVIDER':
+        organization_name = request.form.get('organization_name', '').strip()
+        organization_type = request.form.get('organization_type', '').strip()
+ 
+        if not all([organization_name, organization_type]):
+            flash('Provider details (organization name and type) are required.', 'error')
+            delete_user(user_id)
+            return redirect(url_for('admin.manage_users'))
+ 
+        create_provider(user_id, organization_name, organization_type)
+ 
     flash(f'User {first_name} {last_name} created.', 'success')
     return redirect(url_for('admin.manage_users'))
 

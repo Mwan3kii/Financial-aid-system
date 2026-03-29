@@ -253,14 +253,14 @@ def update_application_status(application_id, new_status,
         cur.execute("""
             UPDATE applications
             SET status = %s, status_remarks = %s,
-                assigned_officer_id = %s, status_updated_at = NOW()
+                assigned_officer_id = %s, last_updated = NOW()
             WHERE application_id = %s
         """, (new_status, remarks, officer_id, application_id))
     else:
         cur.execute("""
             UPDATE applications
             SET status = %s, status_remarks = %s,
-                status_updated_at = NOW()
+                last_updated = NOW()
             WHERE application_id = %s
         """, (new_status, remarks, application_id))
     mysql.connection.commit()
@@ -283,7 +283,7 @@ def save_assessment(application_id, provider_id, financial_score,
             assessed_at       = NOW(),
             decision_date     = NOW(),
             status            = %s,
-            status_updated_at = NOW()
+            last_updated      = NOW()
         WHERE application_id = %s
     """, (
         provider_id, financial_score, academic_score, need_score,
@@ -394,8 +394,8 @@ def create_notification(application_id, sender_id, recipient_id,
     cur.execute("""
         INSERT INTO notifications
             (application_id, sender_id, recipient_id, sender_role,
-             type, subject, message, is_read, channel, sent_at)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, FALSE, 'IN_APP', NOW())
+             type, subject, message, is_read, sent_at)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, FALSE, NOW())
     """, (application_id, sender_id, recipient_id,
           sender_role, notif_type, subject, message))
     mysql.connection.commit()
@@ -424,3 +424,25 @@ def count_unread_notifications(user_id):
     row = cur.fetchone()
     cur.close()
     return row['total']
+
+def create_officer(officer_id, badge_number, embassy_name, department):
+    """Insert a row into verification_officers after user creation."""
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        INSERT INTO verification_officers
+            (officer_id, badge_number, embassy_name, department)
+        VALUES (%s, %s, %s, %s)
+    """, (officer_id, badge_number, embassy_name, department))
+    mysql.connection.commit()
+    cur.close()
+
+def create_provider(provider_id, organization_name, organization_type):
+    """Insert a row into financial_aid_provider after user creation."""
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        INSERT INTO financial_aid_providers
+            (provider_id, organization_name, organization_type)
+        VALUES (%s, %s, %s)
+    """, (provider_id, organization_name, organization_type))
+    mysql.connection.commit()
+    cur.close()

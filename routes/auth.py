@@ -61,7 +61,7 @@ def redirect_by_role(role):
     destinations = {
         'STUDENT':  'student.app_status',
         'OFFICER':  'officer.officer_dashboard',
-        'PROVIDER': 'provider_dashboard',
-        'ADMIN':    'admin_dashboard',
+        'PROVIDER': 'provider.dashboard',
+        'ADMIN':    'admin.manage_users',
     }
     return redirect(url_for(destinations.get(role, 'auth.login')))
