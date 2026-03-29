@@ -83,75 +83,116 @@
       </div>
 
       <div class="stats-row stats-4" style="margin-bottom:22px">
-        <div class="stat-card navy"><div class="stat-val navy">8</div><div class="stat-label">Total Messages</div></div>
-        <div class="stat-card red"><div class="stat-val red">3</div><div class="stat-label">Unread</div></div>
-        <div class="stat-card teal"><div class="stat-val teal">5</div><div class="stat-label">From Officers</div></div>
-        <div class="stat-card gold"><div class="stat-val gold">3</div><div class="stat-label">From Providers</div></div>
+        <div class="stat-card navy">
+          <div class="stat-val navy">{{ notifications | length }}</div>
+          <div class="stat-label">Total Messages</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-val red">{{ unread_count }}</div>
+          <div class="stat-label">Unread</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-val teal">{{ from_officers | length }}</div>
+          <div class="stat-label">From Officers</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-val gold">{{ from_providers | length }}</div>
+          <div class="stat-label">From Providers</div>
+        </div>
       </div>
 
       <div class="card">
         <div class="card-header">
           Messages
-          <span style="margin-left:auto;background:var(--red);font-size:11px;padding:2px 8px;border-radius:100px">3 unread</span>
+          {% if unread_count > 0 %}
+            <span style="margin-left:auto;background:var(--red);color:#fff;font-size:11px;
+                         padding:2px 8px;border-radius:100px;font-weight:600">
+              {{ unread_count }} unread
+            </span>
+          {% endif %}
         </div>
-        <div>
-          <div class="notif-row">
-            <div class="notif-unread"></div>
+ 
+        {% if notifications %}
+          {% for n in notifications %}
+ 
+          {# ── Determine sender label ── #}
+          {% if n.sender_role_name == 'OFFICER' %}
+            {% set sender_label = 'Embassy Verification Officer' %}
+          {% elif n.sender_role_name == 'PROVIDER' %}
+            {% set sender_label = 'Financial Aid Provider' %}
+          {% elif n.sender_role_name == 'ADMIN' %}
+            {% set sender_label = 'System Administrator' %}
+          {% else %}
+            {% set sender_label = 'System' %}
+          {% endif %}
+ 
+          {# ── Determine tag class ── #}
+          {% set notif_type_lower = (n.type or '') | lower %}
+          {% if notif_type_lower == 'decision' %}
+            {% set tag_cls = 'tag-decision' %}
+          {% elif notif_type_lower == 'document' %}
+            {% set tag_cls = 'tag-document' %}
+          {% elif notif_type_lower == 'verification' %}
+            {% set tag_cls = 'tag-verification' %}
+          {% elif notif_type_lower == 'assessment' %}
+            {% set tag_cls = 'tag-assessment' %}
+          {% elif notif_type_lower == 'system' %}
+            {% set tag_cls = 'tag-system' %}
+          {% else %}
+            {% set tag_cls = 'tag-default' %}
+          {% endif %}
+          <div class="notif-row {{ 'is-unread' if not n.is_read else 'is-read' }}">
+            <div class="notif-dot {{ 'unread' if not n.is_read else 'read' }}"></div>
             <div class="notif-content">
               <div class="notif-header">
-                <div class="notif-sender">Financial Aid Provider</div>
-                <span class="notif-tag" style="background:var(--green-bg);color:var(--green)">Decision</span>
-                <div class="notif-date">14 Apr 2025</div>
+                <div class="notif-sender" style="{{ '' if not n.is_read else 'color:var(--dim)' }}">
+                  {{ sender_label }}
+                </div>
+                <span class="notif-tag {{ tag_cls }}">
+                  {{ n.type | title if n.type else 'General' }}
+                </span>
+                <div class="notif-date">
+                  {{ n.sent_at.strftime('%d %b %Y') if n.sent_at else '' }}
+                </div>
               </div>
-              <div class="notif-msg">Your application APP-221051 has been reviewed and <strong>approved</strong>. Funds of KES 250,000 will be disbursed within 5 business days.</div>
-              <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-teal btn-sm">View</button><button class="btn btn-ghost btn-sm">Reply</button></div>
+ 
+              {% if n.subject %}
+                <div class="notif-subject">{{ n.subject }}</div>
+              {% endif %}
+ 
+              <div class="notif-msg" style="{{ 'opacity:.7' if n.is_read else '' }}">
+                {{ n.message }}
+              </div>
+ 
+              <div class="notif-actions">
+                {% if not n.is_read %}
+                  <form method="POST"
+                        action="{{ url_for('student.mark_read', notif_id=n.notification_id) }}"
+                        style="display:inline">
+                    <button type="submit" class="btn btn-ghost btn-sm">Mark as Read</button>
+                  </form>
+                {% endif %}
+                {% if n.application_id %}
+                  <a href="{{ url_for('student.app_status') }}"
+                     class="btn btn-teal btn-sm">View Application</a>
+                {% endif %}
+              </div>
             </div>
           </div>
-          <div class="notif-row">
-            <div class="notif-unread"></div>
-            <div class="notif-content">
-              <div class="notif-header">
-                <div class="notif-sender">Embassy Verification Officer</div>
-                <span class="notif-tag" style="background:var(--amber-bg);color:var(--amber)">Document</span>
-                <div class="notif-date">16 May 2025</div>
-              </div>
-              <div class="notif-msg">Please upload a clearer, more recent passport photo for application APP-224070. The current image is too small to read clearly.</div>
-              <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-teal btn-sm">View</button><button class="btn btn-ghost btn-sm">Reply</button></div>
-            </div>
+ 
+          {% endfor %}
+ 
+        {% else %}
+          <!-- Empty state -->
+          <div class="empty-notif">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <div style="font-size:15px;font-weight:600;margin-bottom:6px">No notifications yet</div>
+            <div style="font-size:13px">You'll receive updates here when officers or providers act on your application.</div>
           </div>
-          <div class="notif-row">
-            <div class="notif-unread"></div>
-            <div class="notif-content">
-              <div class="notif-header">
-                <div class="notif-sender">Embassy Verification Officer</div>
-                <span class="notif-tag" style="background:var(--blue-bg);color:var(--blue)">Verification</span>
-                <div class="notif-date">02 Jun 2025</div>
-              </div>
-              <div class="notif-msg">All your submitted documents for APP-221051 have been successfully verified. Your application is now forwarded to the Financial Aid Provider.</div>
-              <div style="margin-top:8px;display:flex;gap:8px"><button class="btn btn-teal btn-sm">View</button></div>
-            </div>
-          </div>
-          <div class="notif-row">
-            <div class="notif-read"></div>
-            <div class="notif-content">
-              <div class="notif-header">
-                <div class="notif-sender" style="color:var(--dim)">Financial Aid Provider</div>
-                <span class="notif-tag" style="background:var(--off);color:var(--dim)">Assessment</span>
-                <div class="notif-date" style="color:var(--hint)">10 Jun 2025</div>
-              </div>
-              <div class="notif-msg" style="opacity:.7">Your application is currently under assessment. You will be notified once a decision is made.</div>
-            </div>
-          </div>
-          <div class="notif-row">
-            <div class="notif-read"></div>
-            <div class="notif-content">
-              <div class="notif-header">
-                <div class="notif-sender" style="color:var(--dim)">System</div>
-                <span class="notif-tag" style="background:var(--off);color:var(--dim)">System</span>
-                <div class="notif-date" style="color:var(--hint)">15 Jun 2025</div>
-              </div>
-              <div class="notif-msg" style="opacity:.7">System maintenance is scheduled for 20th June 2025, 02:00–04:00 EAT. Some features may be temporarily unavailable.</div>
-            </div>
+        {% endif %}
           </div>
         </div>
       </div>
