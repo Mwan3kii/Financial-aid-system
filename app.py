@@ -7,6 +7,7 @@ from routes.student import student_bp
 from routes.officer import officer_bp
 from routes.provider import provider_bp
 from routes.admin import admin_bp, bcrypt as admin_bcrypt
+import re
 
 def create_app():
     app = Flask(__name__)
@@ -89,10 +90,27 @@ def create_app():
             if not firstname or not lastname or not email or not password:
                 flash('All fields are required', 'error')
                 return redirect(url_for('signup'))
-            
-            if len(password) < 6:
-                flash('Password must be at least 6 characters', 'error')
+            # Name validation: letters only
+            if not re.fullmatch(r"[A-Za-z]+", firstname):
+                flash('First name must contain letters only', 'error')
                 return redirect(url_for('signup'))
+            if not re.fullmatch(r"[A-Za-z]+", lastname):
+                flash('Last name must contain letters only', 'error')
+                return redirect(url_for('signup'))
+
+            # Email validation: must contain @ and end with .com
+            if not re.fullmatch(r"[^@\s]+@[^@\s]+\.com", email):
+                flash('Email must be valid and end with .com', 'error')
+                return redirect(url_for('signup'))
+
+            # Password validation: min 8 chars, at least 1 uppercase, 1 lowercase, 1 number, 1 special char
+            if not re.fullmatch(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", password):
+                flash('Password must be at least 8 characters, include uppercase, lowercase, number, and special character', 'error')
+                return redirect(url_for('signup'))
+
+            # if len(password) < 6:
+            #     flash('Password must be at least 6 characters', 'error')
+            #     return redirect(url_for('signup'))
             
             # Check if user exists
             cursor = mysql.connection.cursor()
