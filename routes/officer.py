@@ -5,7 +5,7 @@ from models import (
     get_pending_applications, get_application_by_id,
     get_documents_by_application, update_application_status,
     update_document_status, create_notification,
-    count_applications_by_status
+    count_applications_by_status, count_applications_by_doc_status, get_all_officer_applications
 )
 
 officer_bp = Blueprint('officer', __name__, url_prefix='/officer')
@@ -25,10 +25,11 @@ def officer_required(f):
 @officer_bp.route('/dashboard')
 @officer_required
 def officer_dashboard():
-    apps   = get_pending_applications()
-    counts = count_applications_by_status()
+    apps   = get_all_officer_applications()
+    # counts = count_applications_by_status()
+    counts = count_applications_by_doc_status()
     stats  = {
-        'pending':  counts.get('SUBMITTED', 0) + counts.get('UNDER_REVIEW', 0),
+        'pending':  counts.get('PENDING', 0) + counts.get('UNDER_REVIEW', 0),
         'verified': counts.get('VERIFIED', 0),
         'rejected': counts.get('REJECTED', 0),
         'docs_req': counts.get('DOCS_REQUESTED', 0),

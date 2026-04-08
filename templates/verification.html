@@ -158,6 +158,10 @@
         <div class="page-title">Student Document Review</div>
         <div class="page-title-bar"></div>
       </div>
+      <!-- Back Button -->
+      <button type="button" class="btn btn-ghost" style="margin-bottom:16px" onclick="window.history.back()">
+        ← Back
+      </button>
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -302,7 +306,17 @@
           -->
           <form id="reviewForm" method="POST"
                 action="{{ url_for('officer.review', application_id=application.application_id) }}">
- 
+            <!-- Verification Criteria -->
+            <div class="verification-criteria" style="margin-bottom:16px;padding:12px;background:#fdf6e3;border-left:4px solid #ffd700;font-size:14px">
+              <strong>Verification Criteria:</strong>
+              <ul style="margin:8px 0 0 16px; padding:0; list-style-type: disc;">
+                <li>All mandatory documents have been submitted: <strong>Passport</strong>, <strong>University Admission Letter</strong>, <strong>Medical Certificate</strong>, <strong>Academic Transcript</strong>, <strong>Bank Statement</strong>.</li>
+                <li>All documents are clear, legible, and complete, with no missing pages, illegible text, or obscured information.</li>
+                <li>Each document is authentic and issued or certified by the relevant authority or designated institution.</li>
+                <li>All dates, signatures, and official seals are present and verifiable where applicable.</li>
+                <li>Documents correspond accurately to the applicant's personal information as provided in the application.</li>
+              </ul>
+            </div>
             <!-- Decision radio cards -->
             <div class="form-group">
               <label class="form-label">Decision</label>

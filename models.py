@@ -134,6 +134,21 @@ def get_applications_by_student(student_id):
     cur.close()
     return apps
 
+def get_all_applications():
+    """For admin."""
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        SELECT a.*, u.first_name, u.last_name,
+               fs.institution, fs.nationality
+        FROM applications a
+        JOIN foreign_students fs ON a.student_id = fs.student_id
+        JOIN users u             ON fs.student_id = u.user_id
+        ORDER BY a.submitted_at DESC
+    """)
+    apps = cur.fetchall()
+    cur.close()
+    return apps
+
 def get_application_by_id(application_id):
     cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
@@ -167,6 +182,41 @@ def get_pending_applications():
     cur.close()
     return apps
 
+# def get_all_officer_applications():
+#     """For officer dashboard — all applications across every status."""
+#     cur = mysql.connection.cursor(DictCursor)
+#     cur.execute("""
+#         SELECT a.*, u.first_name, u.last_name,
+#                fs.nationality, fs.institution
+#         FROM applications a
+#         JOIN foreign_students fs ON a.student_id = fs.student_id
+#         JOIN users u             ON fs.student_id = u.user_id
+#         ORDER BY a.submitted_at ASC
+#     """)
+#     apps = cur.fetchall()
+#     cur.close()
+#     return apps
+
+def count_applications_by_doc_status():
+    """Count applications grouped by their most recent document verification_status."""
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        SELECT d.verification_status AS doc_status, COUNT(*) AS total
+        FROM applications a
+        LEFT JOIN (
+            SELECT application_id,
+                   verification_status,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY application_id
+                       ORDER BY uploaded_at DESC
+                   ) AS rn
+            FROM documents
+        ) d ON d.application_id = a.application_id AND d.rn = 1
+        GROUP BY d.verification_status
+    """)
+    rows = cur.fetchall()
+    cur.close()
+    return {r['doc_status']: r['total'] for r in rows}
 
 def get_verified_applications():
     """For provider — only applications with status VERIFIED."""
@@ -205,21 +255,30 @@ def save_assessment(application_id, provider_id, decision_outcome,
     cur.close()
 
 
-def get_all_applications():
-    """For admin."""
+def get_all_officer_applications():
+    """For officer dashboard — applications grouped by their document verification status."""
     cur = mysql.connection.cursor(DictCursor)
     cur.execute("""
         SELECT a.*, u.first_name, u.last_name,
-               fs.institution, fs.nationality
+               fs.nationality, fs.institution,
+               d.verification_status AS doc_status
         FROM applications a
         JOIN foreign_students fs ON a.student_id = fs.student_id
         JOIN users u             ON fs.student_id = u.user_id
-        ORDER BY a.submitted_at DESC
+        LEFT JOIN (
+            SELECT application_id,
+                   verification_status,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY application_id
+                       ORDER BY uploaded_at DESC
+                   ) AS rn
+            FROM documents
+        ) d ON d.application_id = a.application_id AND d.rn = 1
+        ORDER BY a.submitted_at ASC
     """)
     apps = cur.fetchall()
     cur.close()
     return apps
-
 
 def create_application(student_id, amount, purpose):
     cur = mysql.connection.cursor(DictCursor)

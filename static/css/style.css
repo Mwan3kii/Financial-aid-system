@@ -501,3 +501,15 @@ tbody td{padding:11px 14px;color:var(--text);vertical-align:middle}
    SVG ICONS (inline)
 ═══════════════════════════════════ */
 .icon{display:inline-flex;align-items:center;justify-content:center}
+
+/* Clickable stat card — active filter state */
+.stat-card { transition: border-color .15s; }
+
+.stat-card-active.navy { border: 2px solid #0f2d5e; }
+.stat-card-active.green { border: 2px solid #3B6D11; }
+.stat-card-active.red   { border: 2px solid #A32D2D; }
+.stat-card-active.gold  { border: 2px solid #854F0B; }
+
+/* Add these pill classes if you don't have them yet */
+.pill.approved { background: #EAF3DE; color: #27500A; }
+.pill.rejected { background: #FCEBEB; color: #791F1F; }

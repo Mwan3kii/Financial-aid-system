@@ -47,35 +47,58 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
+      <!-- ── Stat Cards (now clickable) ── -->
       <div class="stats-row stats-4">
-      <div class="stat-card navy">
-        <div class="stat-val navy">{{ stats.pending }}</div>
-        <div class="stat-label">Total Pending</div>
+        <div class="stat-card navy" id="card-all" onclick="setFilter('all', this)" style="cursor:pointer">
+          <div class="stat-val navy">{{ stats.pending }}</div>
+          <div class="stat-label">Total Pending</div>
+        </div>
+        <div class="stat-card green" id="card-verified" onclick="setFilter('verified', this)" style="cursor:pointer">
+          <div class="stat-val green">{{ stats.verified }}</div>
+          <div class="stat-label">Verified</div>
+        </div>
+        <div class="stat-card red" id="card-rejected" onclick="setFilter('rejected', this)" style="cursor:pointer">
+          <div class="stat-val red">{{ stats.rejected }}</div>
+          <div class="stat-label">Rejected</div>
+        </div>
+        <div class="stat-card gold" id="card-docs" onclick="setFilter('docs', this)" style="cursor:pointer">
+          <div class="stat-val gold">{{ stats.docs_req }}</div>
+          <div class="stat-label">Awaiting Docs</div>
+        </div>
       </div>
-      <div class="stat-card green">
-        <div class="stat-val green">{{ stats.verified }}</div>
-        <div class="stat-label">Verified</div>
-      </div>
-      <div class="stat-card red">
-        <div class="stat-val red">{{ stats.rejected }}</div>
-        <div class="stat-label">Rejected</div>
-      </div>
-      <div class="stat-card gold">
-        <div class="stat-val gold">{{ stats.docs_req }}</div>
-        <div class="stat-label">Awaiting Docs</div>
-      </div>
-    </div>
 
-      <div class="search-bar">
+      <!-- ── Active filter badge ── -->
+      <div id="filter-badge" style="display:none;margin-bottom:14px;">
+        <span style="display:inline-flex;align-items:center;gap:8px;font-size:12px;
+                     background:#f4f4f2;border:1px solid #ddd;border-radius:20px;
+                     padding:4px 12px;color:#555;">
+          <span id="filter-label"></span>
+          <button onclick="clearFilter()"
+                  style="background:none;border:none;cursor:pointer;font-size:14px;
+                         color:#888;line-height:1;padding:0;">✕</button>
+        </span>
+      </div>
+
+      <!-- <div class="search-bar">
         <span class="search-icon">🔍</span>
         <input class="search-input" placeholder="Search by student name or application ID...">
         <button class="btn btn-teal btn-sm">Search</button>
-      </div>
+      </div> -->
 
       <div class="card">
-        <div class="card-header">Pending Applications</div>
+        <div class="card-header" id="table-heading">Pending Applications</div>
         <div class="table-wrap">
           <table>
+            <thead><tr>
+              <th>#</th><th>Student Name</th><th>Application ID</th>
+              <th>Nationality</th><th>Submit Date</th><th>Loan (KES)</th>
+              <th>Status</th><th>Action</th>
+            </tr></thead>
+            <tbody id="app-tbody">
+              {# rows rendered by JS from the allApps array below #}
+            </tbody>
+          </table>
+          <!-- <table>
             <thead><tr>
               <th>#</th><th>Student Name</th><th>Application ID</th><th>Nationality</th><th>Submit Date</th><th>Loan (KES)</th><th>Status</th><th>Action</th>
             </tr></thead>
@@ -115,7 +138,6 @@
               </td>
  
               <td>
-                <!-- Links to officer.review route with the real application_id -->
                 <a href="{{ url_for('officer.review', application_id=app.application_id) }}"
                    class="btn btn-teal btn-sm">
                   Review
@@ -131,11 +153,116 @@
             </tr>
             {% endfor %}
             </tbody>
-          </table>
+          </table> -->
         </div>
       </div>
     </div>
   </div>
 </div>
+<script>
+  const allApps = [
+  {% for app in applications %}
+  {
+    index:      {{ loop.index }},
+    name:       {{ (app.first_name ~ ' ' ~ app.last_name) | tojson }},
+    app_id:     {{ app.application_id | tojson }},
+    nationality:{{ (app.nationality or '—') | tojson }},
+    date:       {{ app.submitted_at.strftime('%d %b %Y') | tojson }},
+    amount:     {{ "{:,.0f}".format(app.requested_amount) | tojson }},
+    status:     {{ app.status | tojson }},
+    doc_status: {{ (app.doc_status or 'PENDING') | tojson }},
+    review_url: {{ url_for('officer.review', application_id=app.application_id) | tojson }}
+  }{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+
+  // Which DB statuses belong to each card
+  const filterMap = {
+  all:      ['PENDING', 'SUBMITTED'],
+  verified: ['VERIFIED'],
+  rejected: ['REJECTED'],
+  docs:     ['DOCS_REQUESTED'],
+};
+
+  const cardTitles = {
+    all:      'Pending Applications',
+    verified: 'Verified Applications',
+    rejected: 'Rejected Applications',
+    docs:     'Awaiting Documents',
+  };
+
+  const filterLabels = {
+    verified: 'Showing: Verified',
+    rejected: 'Showing: Rejected',
+    docs:     'Showing: Awaiting Docs',
+  };
+
+  function pillHtml(doc_status) {
+  const map = {
+    PENDING:        '<span class="pill under-review">Pending</span>',
+    SUBMITTED:      '<span class="pill under-review">Submitted</span>',
+    VERIFIED:       '<span class="pill approved">Verified</span>',
+    REJECTED:       '<span class="pill rejected">Rejected</span>',
+    DOCS_REQUESTED: '<span class="pill pending">Docs Requested</span>',
+  };
+  return map[doc_status] || `<span class="pill pending">${doc_status}</span>`;
+  }
+
+  function renderTable(filter) {
+  const statuses = filterMap[filter];
+  const rows = allApps.filter(a => statuses.includes(a.doc_status));  // ← was a.status
+  const tbody = document.getElementById('app-tbody');
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="8"
+      style="text-align:center;padding:36px;color:var(--dim);font-size:13px">
+      No applications found for this status.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map((a, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td style="font-weight:500">${a.name}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">APP-${a.app_id}</td>
+      <td>${a.nationality}</td>
+      <td style="color:var(--dim);font-size:12px">${a.date}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${a.amount}</td>
+      <td>${pillHtml(a.doc_status)}</td>
+      <td><a href="${a.review_url}" class="btn btn-teal btn-sm">Review</a></td>
+    </tr>
+  `).join('');
+}
+
+  let activeFilter = 'all';
+
+  function setFilter(filter, el) {
+    activeFilter = filter;
+
+    // toggle active border on cards
+    document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('stat-card-active'));
+    el.classList.add('stat-card-active');
+
+    // badge
+    const badge = document.getElementById('filter-badge');
+    if (filter === 'all') {
+      badge.style.display = 'none';
+    } else {
+      badge.style.display = 'block';
+      document.getElementById('filter-label').textContent = filterLabels[filter];
+    }
+
+    document.getElementById('table-heading').textContent = cardTitles[filter];
+    renderTable(filter);
+  }
+
+  function clearFilter() {
+    setFilter('all', document.getElementById('card-all'));
+  }
+
+  // Initial render
+  document.getElementById('card-all').classList.add('stat-card-active');
+  renderTable('all');
+  </script>
 </body>
 </html>

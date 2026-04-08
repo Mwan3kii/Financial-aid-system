@@ -50,6 +50,10 @@
         <div class="page-title">Assess Application</div>
         <div class="page-title-bar"></div>
       </div>
+      <!-- Back Button -->
+      <button type="button" class="btn btn-ghost" style="margin-bottom:16px" onclick="window.history.back()">
+        ← Back
+      </button>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
