@@ -234,6 +234,22 @@ def get_verified_applications():
     cur.close()
     return apps
 
+def get_all_provider_applications():
+    """For provider dashboard — VERIFIED, APPROVED, and REJECTED applications."""
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("""
+        SELECT a.*, u.first_name, u.last_name,
+               fs.nationality, fs.institution, fs.program_of_study
+        FROM applications a
+        JOIN foreign_students fs ON a.student_id = fs.student_id
+        JOIN users u             ON fs.student_id = u.user_id
+        WHERE a.status IN ('VERIFIED', 'APPROVED', 'REJECTED')
+        ORDER BY a.submitted_at ASC
+    """)
+    apps = cur.fetchall()
+    cur.close()
+    return apps
+
 def save_assessment(application_id, provider_id, decision_outcome,
                     approved_amount, justification):
     """Save provider assessment — simplified, no scoring fields."""

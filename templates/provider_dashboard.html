@@ -45,28 +45,46 @@
         {% endif %}
       {% endwith %}
       <div class="stats-row stats-4">
-        <div class="stat-card teal">
+        <div class="stat-card teal" id="card-verified"
+             onclick="setFilter('verified', this)" style="cursor:pointer">
           <div class="stat-val teal">{{ stats.verified }}</div>
           <div class="stat-label">Awaiting Assessment</div>
         </div>
-        <div class="stat-card green">
+        <div class="stat-card green" id="card-approved"
+             onclick="setFilter('approved', this)" style="cursor:pointer">
           <div class="stat-val green">{{ stats.approved }}</div>
           <div class="stat-label">Approved</div>
         </div>
-        <div class="stat-card red">
+        <div class="stat-card red" id="card-rejected"
+             onclick="setFilter('rejected', this)" style="cursor:pointer">
           <div class="stat-val red">{{ stats.rejected }}</div>
           <div class="stat-label">Rejected</div>
         </div>
       </div>
+
+      <!-- ── Active filter badge ── -->
+      <div id="filter-badge" style="display:none;margin-bottom:14px;">
+        <span style="display:inline-flex;align-items:center;gap:8px;font-size:12px;
+                     background:#f4f4f2;border:1px solid #ddd;border-radius:20px;
+                     padding:4px 12px;color:#555;">
+          <span id="filter-label"></span>
+          <button onclick="clearFilter()"
+                  style="background:none;border:none;cursor:pointer;font-size:14px;
+                         color:#888;line-height:1;padding:0;">✕</button>
+        </span>
+      </div>
       
       <div class="card">
-        <div class="card-header">Verified Applications — Ready for Assessment</div>
+        <div class="card-header" id="table-heading">Verified Applications — Ready for Assessment</div>
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>#</th><th>Student Name</th><th>Application ID</th><th>Loan (KES)</th><th>Institution</th><th>Verified Date</th><th>Status</th><th>Action</th>
+              <th>#</th><th>Student Name</th><th>Application ID</th><th>Loan (KES)</th><th>Institution</th><th>Verified Date</th><th>Status</th><th>Assessment Comments</th><th>Action</th>
             </tr></thead>
-            <tbody>
+            <tbody id="app-tbody">
+              {# rendered by JS #}
+            </tbody>
+            <!-- <tbody>
               {% if applications %}
                 {% for app in applications %}
                 <tr>
@@ -94,12 +112,114 @@
                   </td>
                 </tr>
               {% endif %}
-            </tbody>
+            </tbody> -->
           </table>
         </div>
       </div>
     </div>
   </div>
 </div>
+ <script>
+  const allApps = [
+    {% for app in applications %}
+    {
+      name:       {{ (app.first_name ~ ' ' ~ app.last_name) | tojson }},
+      app_id:     {{ app.application_id | tojson }},
+      amount:     {{ '{:,.0f}'.format(app.requested_amount) | tojson }},
+      institution:{{ (app.institution or '—') | tojson }},
+      date:       {{ app.submitted_at.strftime('%d %b %Y') | tojson }},
+      status:     {{ app.status | tojson }},
+      comments:    {{ (app.assessment_comments or '—') | tojson }},
+      assess_url: {{ url_for('provider.assess', application_id=app.application_id) | tojson }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const filterMap = {
+    verified: ['VERIFIED'],
+    approved: ['APPROVED'],
+    rejected: ['REJECTED'],
+  };
+
+  const cardTitles = {
+    verified: 'Awaiting Assessment',
+    approved: 'Approved Applications',
+    rejected: 'Rejected Applications',
+  };
+
+  const filterLabels = {
+    verified: 'Showing: Awaiting Assessment',
+    approved: 'Showing: Approved',
+    rejected: 'Showing: Rejected',
+  };
+
+  function pillHtml(status) {
+    const map = {
+      VERIFIED: '<span class="pill verified-status">Verified</span>',
+      APPROVED: '<span class="pill approved">Approved</span>',
+      REJECTED: '<span class="pill rejected">Rejected</span>',
+    };
+    return map[status] || `<span class="pill pending">${status}</span>`;
+  }
+
+  function actionBtn(app) {
+    if (app.status === 'VERIFIED') {
+      return `<a href="${app.assess_url}" class="btn btn-gold btn-sm">Assess</a>`;
+    }
+    // already assessed — view only
+    return `<a href="${app.assess_url}" class="btn btn-sm">View</a>`;
+  }
+
+  function renderTable(filter) {
+    const statuses = filterMap[filter];
+    const rows = allApps.filter(a => statuses.includes(a.status));
+    const tbody = document.getElementById('app-tbody');
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="9"
+        style="text-align:center;padding:36px;color:var(--dim);font-size:13px">
+        No applications found for this status.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map((a, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td style="font-weight:500">${a.name}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px">
+          APP-${String(a.app_id).padStart(6, '0')}
+        </td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px">${a.amount}</td>
+        <td>${a.institution}</td>
+        <td style="color:var(--dim);font-size:12px">${a.date}</td>
+        <td>${pillHtml(a.status)}</td>
+        <td style="font-size:12px;color:var(--dim);max-width:200px">${a.comments}</td>
+        <td>${actionBtn(a)}</td>
+      </tr>
+    `).join('');
+  }
+
+  let activeFilter = 'verified';
+
+  function setFilter(filter, el) {
+    activeFilter = filter;
+    document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('stat-card-active'));
+    el.classList.add('stat-card-active');
+
+    const badge = document.getElementById('filter-badge');
+    badge.style.display = 'block';
+    document.getElementById('filter-label').textContent = filterLabels[filter];
+    document.getElementById('table-heading').textContent = cardTitles[filter];
+    renderTable(filter);
+  }
+
+  function clearFilter() {
+    setFilter('verified', document.getElementById('card-verified'));
+  }
+
+  // Start on verified (awaiting assessment) by default
+  document.getElementById('card-verified').classList.add('stat-card-active');
+  renderTable('verified');
+  </script>
 </body>
 </html>

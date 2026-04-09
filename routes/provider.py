@@ -4,7 +4,7 @@ from functools import wraps
 from models import (
     get_verified_applications, get_application_by_id,
     get_documents_by_application, save_assessment,
-    create_notification, count_applications_by_status
+    create_notification, count_applications_by_status, get_all_provider_applications
 )
 
 provider_bp = Blueprint('provider', __name__, url_prefix='/provider')
@@ -24,7 +24,7 @@ def provider_required(f):
 @provider_bp.route('/dashboard')
 @provider_required
 def dashboard():
-    apps   = get_verified_applications()
+    apps   = get_all_provider_applications()
     counts = count_applications_by_status()
     stats  = {
         'verified':  counts.get('VERIFIED', 0) + counts.get('FORWARDED', 0),
