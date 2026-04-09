@@ -92,7 +92,7 @@
             <thead><tr>
               <th>#</th><th>Student Name</th><th>Application ID</th>
               <th>Nationality</th><th>Submit Date</th><th>Loan (KES)</th>
-              <th>Status</th><th>Action</th>
+              <th>Status</th><th>Verification Comments</th><th>Action</th>
             </tr></thead>
             <tbody id="app-tbody">
               {# rows rendered by JS from the allApps array below #}
@@ -170,6 +170,7 @@
     date:       {{ app.submitted_at.strftime('%d %b %Y') | tojson }},
     amount:     {{ "{:,.0f}".format(app.requested_amount) | tojson }},
     status:     {{ app.status | tojson }},
+    comments:   {{ (app.status_remarks or '—') | tojson }},
     doc_status: {{ (app.doc_status or 'PENDING') | tojson }},
     review_url: {{ url_for('officer.review', application_id=app.application_id) | tojson }}
   }{% if not loop.last %},{% endif %}
@@ -214,7 +215,7 @@
   const tbody = document.getElementById('app-tbody');
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="8"
+    tbody.innerHTML = `<tr><td colspan="9"
       style="text-align:center;padding:36px;color:var(--dim);font-size:13px">
       No applications found for this status.</td></tr>`;
     return;
@@ -229,6 +230,7 @@
       <td style="color:var(--dim);font-size:12px">${a.date}</td>
       <td style="font-family:'DM Mono',monospace;font-size:12px">${a.amount}</td>
       <td>${pillHtml(a.doc_status)}</td>
+      <td style="font-size:12px;color:var(--dim);max-width:200px">${a.comments}</td>
       <td><a href="${a.review_url}" class="btn btn-teal btn-sm">Review</a></td>
     </tr>
   `).join('');
